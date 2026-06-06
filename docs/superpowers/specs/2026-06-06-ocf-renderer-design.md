@@ -21,8 +21,10 @@ It serves two consumers:
    surface.
 
 **v1 scope:** render a **single frame** as a still SVG (court + entities +
-action arrows derived from the frame's semantic actions). This is the smallest
-useful core; everything else builds on it.
+action arrows derived from the frame's semantic actions). A multi-step drill is
+rendered as a **series of single-frame stills — one image per frame**
+(`renderFrames`), *not* a combined composite. This is the smallest useful core;
+everything else builds on it.
 
 **Out of scope for v1 (roadmap):**
 - Multi-frame **composite** ("playbook" image showing the whole play in one
@@ -172,7 +174,9 @@ convention (defined in spec PR #5, and **verified by rendering** the raw glyph):
   toward `+x` (viewer's right), `180°` → `+y` (toward the attacking basket),
   `270°` → `−x` (viewer's left). This matches native SVG `rotate()`.
 - The renderer applies `rotation` **exactly as given**; it does **not** infer
-  facing from nearby players.
+  facing from nearby players. A defender's *meaningful* facing (toward the ball
+  or the player they guard) is the **author's / LLM's / editor's** responsibility,
+  expressed in the data — not a renderer heuristic.
 - `rotation` is accepted but **not rendered** for offense (a filled circle has no
   facing).
 
@@ -180,6 +184,46 @@ convention (defined in spec PR #5, and **verified by rendering** the raw glyph):
 > during design and only resolved by **rasterizing the glyph and looking at it**.
 > Directional symbols MUST be verified against rendered output (see §7 visual
 > tests), never against intuition.
+>
+> Because the renderer never infers facing, **example and test documents MUST use
+> realistic `rotation` values** (defenders facing the ball / their matchup).
+> Documents that omit `rotation` render every defender at the same default angle,
+> which looks wrong — that is a data quality issue, not a renderer bug.
+
+### 5.2 Symbol proportions and jersey numbers
+
+Symbols are sized by a fixed **height** in screen units, scaled **uniformly**
+(no distortion of the icon geometry); the width follows each icon's natural
+aspect ratio. The FIBA tool's sizes are the **reference for relative
+proportions**, not exact pixel mandates:
+
+- **Offense:** height ≈ **30** (a circle, so ~30×30).
+- **Defense:** the FIBA arms glyph scaled **uniformly to height ≈ 23**. Its true
+  aspect (~2.2:1) means the width lands around **~51** on its own — wider and
+  flatter than offense, as in the FIBA tool — *as a consequence of uniform
+  scaling*, not a forced width.
+- The exact base height is a render option (diagrams scale with output width);
+  what matters is the **ratio** offense ≈ 30 : defender height ≈ 23.
+
+**Jersey numbers** are laid out for **0–99** (one or two digits). Two-digit
+numbers use a slightly smaller font so they fit the symbol. The number is always
+drawn **upright and centered** on the symbol and **does not rotate** with the
+glyph — a defender at `rotation: 180°` still shows an upright number, not an
+upside-down one.
+
+### 5.3 Distinct positions and the overlap safety net
+
+Per the spec (a `Distinct Positions` rule was added — spec PR #6), two entities
+in a single state must be at least one **player diameter** apart. The renderer's
+two-part stance:
+
+1. **Trust valid data.** Validated documents already guarantee separation, so
+   symbols don't overlap.
+2. **Safety net.** If symbols still *touch* after layout (e.g. an unvalidated
+   document, or borderline-close valid positions), the renderer applies a small
+   **visual nudge** to separate them — a render-only adjustment that does **not**
+   change the underlying coordinates (which remain the source of truth). This is
+   a last-resort legibility guard, not a substitute for the data rule.
 
 ---
 
@@ -220,21 +264,49 @@ types share consistent geometry:
 - **Tangent-aware markers:** arrowheads and the screen bar are oriented by the
   **tangent at the path's end**, so they read correctly on curved paths (the
   screen bar is perpendicular to that tangent, not always vertical).
+- **Arrow trimming (end gap):** an arrowhead must **stop short of the target
+  symbol's border**, not land on or inside it. The path end is pulled back by the
+  target symbol's radius **plus a small margin** (≈ 4 px) before the arrowhead is
+  placed. This matters most for `pass`, where the head points at a receiver, but
+  applies to every arrowed action whose endpoint coincides with a player.
 
-### 6.3 Dribble wave (verified defaults)
+### 6.3 Dribble wave
 
-The dribble overlay is a **smooth sine wave** along the (resampled) base path:
+The dribble overlay is a **smooth sine wave** along the (resampled) base path.
 
-- **Constant amplitude** across the wavy region (no fade-in/fade-out of
-  amplitude). Default **amplitude ≈ 5 px**.
-- **Wavelength** chosen so an **integer number of full waves** fits the wavy span
-  exactly → every arc has the same size, including on curves. Target wavelength
-  **≈ 12 px**, snapped to fit.
-- **Flat (wave-free) ends of 15 px** at the start and before the arrowhead, so
-  the line meets the player symbol and the arrowhead cleanly. (A fixed pixel
-  length, not a percentage.)
-- Rounded line caps/joins for a clean snake.
+**Hard requirement — a dribble is ALWAYS wavy.** In a still frame the wave is the
+*only* thing that distinguishes a dribble (moving with the ball) from a run
+(`move`/`cut`, no ball). A dribble must therefore **never** render as a smooth
+line, no matter how short — a wave-free dribble would be indistinguishable from a
+run. (In a future animated renderer this is moot, since the ball moves with the
+player; in a still with movement arrows it is essential.)
 
+Defaults / shape rules:
+
+- **Constant amplitude** across the wavy region (no amplitude fade). Default
+  **amplitude ≈ 5 px**.
+- **Fixed wavelength** (≈ **11–12 px**), snapped so a whole number of waves fits
+  → every arc is the same size on straight and curved paths alike. A **shorter
+  path yields FEWER waves, never squeezed waves**, and never fewer than ~1–2
+  full arcs so the dribble stays recognizable.
+- **Short flat ends** (a small fixed length, capped to a fraction of the path on
+  short paths) so the line meets the symbol and arrowhead cleanly without eating
+  the whole wave on short dribbles.
+- **Curvature-clamped amplitude:** on a tightly curved path the amplitude is
+  reduced so the wave does not self-overlap or look bulbous on the bend
+  (amplitude bounded by a fraction of the local curvature radius), while staying
+  visible.
+- Rounded line caps/joins.
+
+> **Implementation-tuned detail.** The *requirement* above is fixed (always wavy,
+> fixed wavelength, fewer-not-squeezed on short paths, curvature-clamped, ≥1–2
+> arcs). The **exact** amplitude/wavelength/clamp constants that look good across
+> the full range of real paths — especially **short, sharply curved dribbles** —
+> are deferred to implementation, where they are tuned against **visual snapshot
+> tests** over many real cases (§7). Brainstorming reproduced the failure mode
+> (short curved dribbles render squeezed/bulbous) but the polished fix belongs in
+> code with a test harness, not in a static mockup.
+>
 > The "wave crosses the path at 90°" coil/loop alternative was explored and
 > rejected for v1 in favor of the simpler, well-established sine wave.
 
@@ -293,17 +365,26 @@ CI runs both layers (one TS job initially, mirroring the validator's CI).
 ## 8. Public API (sketch)
 
 ```ts
-import { renderFrame } from "@ocf/renderer";
+import { renderFrame, renderFrames } from "@ocf/renderer";
 
+// one frame → one SVG
 const svg: string = renderFrame(doc, frameIndex, {
   width?: number,            // output pixel width (height derived from court aspect)
   colorScheme?: Partial<…>,  // overrides on top of doc.color_scheme and defaults
 });
+
+// whole drill → one SVG per frame (the typical "drill sheet" output)
+const svgs: string[] = renderFrames(doc, opts);
 ```
 
 - `renderFrame(doc, frameIndex, opts) -> string` (SVG markup) is the core.
+- **`renderFrames(doc, opts) -> string[]`** renders **each frame as its own
+  still** and returns the series. This is the primary v1 output for a multi-step
+  drill: **a series of single-frame images, one per frame** — *not* a single
+  combined "composite" diagram and *not* a single image with step numbers (both
+  are deferred, see §10). The frame order conveys the sequence.
 - Convenience wrappers can follow (`renderFrameToFile`, a small CLI), but the
-  pure string-producing function is the contract.
+  pure string-producing functions are the contract.
 - The renderer assumes the document is **valid**; pairing with the validator
   (validate before render) is the intended workflow but not enforced inside the
   renderer.
@@ -313,18 +394,27 @@ const svg: string = renderFrame(doc, frameIndex, {
 ## 9. Relationship to other OCF projects
 
 - **Spec** (`opencoachingformat/spec`): the renderer is a consumer. The design
-  surfaced one spec gap (defender `rotation` convention), already fixed in spec
-  PR #5. Future rendering work may surface more spec precisions; each becomes its
-  own small spec PR.
+  surfaced two spec precisions, each fixed via a small spec PR:
+  - the **defender `rotation` convention** (spec PR #5), and
+  - the **distinct-positions / minimum-separation rule** (spec PR #6), which the
+    renderer relies on (§5.3) and the validator will enforce.
+  Future rendering work may surface more spec precisions; each becomes its own
+  small spec PR.
 - **Validator** (`opencoachingformat/ocf-validator`): complementary. Validate →
-  render is the pipeline. Share document types where practical.
+  render is the pipeline. Share document types where practical. A new validator
+  rule for the minimum-separation constraint (spec PR #6) is a follow-up there.
 - **Editor** (future): builds on this renderer.
 
 ---
 
 ## 10. Out of scope for v1 (summary)
 
-- Multi-frame composite (playbook image with step numbers) — v1.1.
+- **Multi-frame composite** — a single combined diagram showing the whole play at
+  once, with **step numbers** ordering the actions — is **v1.1**. v1 renders a
+  multi-step drill as a **series of single-frame stills** (`renderFrames`), not a
+  composite; step numbers exist only for the composite and are not drawn in v1.
 - Animation / playback — later.
 - Shot-type glyph differentiation — later (`variant`/`tags` already carry data).
 - Non-FIBA court geometry — follows FIBA.
+- Renderer-side inference of defender facing — explicitly rejected; `rotation`
+  comes from the data only (§5.1).
