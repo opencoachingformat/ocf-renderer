@@ -153,7 +153,7 @@ lines (`#3b6ea5`). All of these are **defaults**; any value the document sets in
 |---|---|---|
 | `offense` | filled circle + number | **2px white stroke** around the circle (spec); fill = `color_scheme.offense_fill`. |
 | `defense` | **FIBA "arms" glyph** + number | An arc (the outstretched arms) over an inner circle. **Directional** — see §5.1. Fill neutral dark by default; `color_scheme.defense_*`. |
-| `ball` | small orange dot | Lives in the document's `balls[]`; drawn at its carrier or loose position. |
+| `ball` | small orange dot | Lives in the document's `balls[]`. A **carried** ball is drawn **offset** from its carrier (ahead + to one side), not on top — see §5.4. A **loose** ball is drawn on its coordinate. |
 | `coach` | circle labelled "C" | |
 | `cone` | small triangle | Training marker / obstacle. |
 
@@ -224,6 +224,34 @@ two-part stance:
    **visual nudge** to separate them — a render-only adjustment that does **not**
    change the underlying coordinates (which remain the source of truth). This is
    a last-resort legibility guard, not a substitute for the data rule.
+
+### 5.4 Ball placement (carried ball offset)
+
+A **carried** ball (`carried_by`) is **not** drawn on top of its carrier — doing
+so hides the jersey number and conveys nothing about ball handling. Instead it is
+drawn **slightly ahead of and to one side of** the carrier, per the spec
+convention added in spec PR #7:
+
+- **Direction ("ahead"):** the **initial tangent of the carrier's ball action in
+  that frame** (`dribble` / `pass` / `shoot`) — i.e. where the ball is being
+  driven. If the carrier has no ball action in the frame, fall back to "toward the
+  attacking basket".
+- **Side:** **right** of the travel direction by **default** (or with a
+  `right_handed` tag); **left** when the action carries the `left_handed` tag.
+- **Offset:** ahead + perpendicular by a small fixed amount so the ball sits just
+  off the symbol with the number clear. (Exact ahead/side magnitudes are tuned in
+  implementation against visual snapshots — see the note below.)
+
+A **loose** ball (`at:` a coordinate, not carried) is drawn **on its coordinate**
+with no offset — the offset applies only to a carried ball.
+
+This placement also gives a future **animated** renderer the hook to show a
+**hand change** (crossover right↔left) or the dribble→shoot transition correctly.
+
+> **Implementation-tuned detail.** The *rule* (carried = offset ahead+side by
+> tag; loose = on coordinate) is fixed. The exact distances and the blend of
+> "ahead" vs. "to the side" are tuned in implementation with visual snapshot
+> tests (§7), like the dribble wave constants.
 
 ---
 
@@ -354,9 +382,12 @@ at**:
    documents to SVG and compare against committed reference SVGs. A diff in the
    SVG string flags an unintended visual change. Fixtures include: each entity
    type, a defender at 0/90/180/270°, each action type on a straight path and on
-   a ≥4-anchor curve, a path that must route around an obstacle, and a couple of
-   real spec examples (e.g. pick-and-roll frame). Rasterizing a snapshot for
-   human review is part of the workflow when a visual fixture changes.
+   a ≥4-anchor curve, a path that must route around an obstacle, a carried ball
+   offset (default right / `left_handed` left, plus a loose ball on its
+   coordinate), a short sharply-curved dribble (the squeeze failure mode), and a
+   couple of real spec examples (e.g. pick-and-roll frame). Rasterizing a
+   snapshot for human review is part of the workflow when a visual fixture
+   changes.
 
 CI runs both layers (one TS job initially, mirroring the validator's CI).
 
@@ -394,10 +425,12 @@ const svgs: string[] = renderFrames(doc, opts);
 ## 9. Relationship to other OCF projects
 
 - **Spec** (`opencoachingformat/spec`): the renderer is a consumer. The design
-  surfaced two spec precisions, each fixed via a small spec PR:
-  - the **defender `rotation` convention** (spec PR #5), and
+  surfaced three spec precisions, each fixed via a small spec PR:
+  - the **defender `rotation` convention** (spec PR #5),
   - the **distinct-positions / minimum-separation rule** (spec PR #6), which the
-    renderer relies on (§5.3) and the validator will enforce.
+    renderer relies on (§5.3) and the validator will enforce, and
+  - **curated `left_handed`/`right_handed` tags + the ball-side rendering
+    convention** (spec PR #7), which drives carried-ball placement (§5.4).
   Future rendering work may surface more spec precisions; each becomes its own
   small spec PR.
 - **Validator** (`opencoachingformat/ocf-validator`): complementary. Validate →
