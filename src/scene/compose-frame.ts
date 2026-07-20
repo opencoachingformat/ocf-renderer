@@ -72,11 +72,12 @@ export function composeFrame(
     obstacles.push({ center: worldPos, radius });
   }
 
-  if (startState.ball) {
+  const ballState = startState.ball;
+  if (ballState) {
     const ballGroup = new THREE.Group();
     ballGroup.name = "ball";
-    if (startState.ball.status === "carried") {
-      const carrierState = startState.entities.find((e) => e.entity_ref === startState.ball!.carried_by);
+    if (ballState.status === "carried") {
+      const carrierState = startState.entities.find((e) => e.entity_ref === ballState.carried_by);
       const carrierEntity = doc.entities.find((e) => e.id === carrierState?.entity_ref);
       const carrierWorldPos = carrierState ? transformer.resolveToWorld(carrierState.position) : new THREE.Vector3();
       // v1 simplification: always offset "forward" toward -Z (frontcourt), regardless
@@ -89,7 +90,7 @@ export function composeFrame(
       ballGroup.add(ball);
     } else {
       const ball = buildBallSymbol(colors.ball);
-      ball.position.copy(transformer.resolveToWorld(startState.ball.position));
+      ball.position.copy(transformer.resolveToWorld(ballState.position));
       ballGroup.add(ball);
     }
     scene.add(ballGroup);
