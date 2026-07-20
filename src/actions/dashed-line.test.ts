@@ -3,6 +3,10 @@ import * as THREE from "three";
 import { buildDashedLine } from "./dashed-line";
 
 describe("buildDashedLine", () => {
+  it("throws for fewer than 2 points", () => {
+    expect(() => buildDashedLine([new THREE.Vector3(0, 0, 0)])).toThrow(/at least 2 points/);
+  });
+
   it("builds a Line named 'pass-path' using a dashed material with line distances computed", () => {
     const points = [new THREE.Vector3(0, 0, 0), new THREE.Vector3(3, 0, 0)];
     const line = buildDashedLine(points);

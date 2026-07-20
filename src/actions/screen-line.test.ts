@@ -3,6 +3,10 @@ import * as THREE from "three";
 import { buildScreenLine } from "./screen-line";
 
 describe("buildScreenLine", () => {
+  it("throws for fewer than 2 points", () => {
+    expect(() => buildScreenLine([new THREE.Vector3(0, 0, 0)])).toThrow(/at least 2 points/);
+  });
+
   it("builds a group with a line and a perpendicular end bar", () => {
     const points = [new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 0, -4)];
     const group = buildScreenLine(points);

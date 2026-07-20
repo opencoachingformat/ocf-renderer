@@ -3,6 +3,10 @@ import * as THREE from "three";
 import { buildWavyLine } from "./wavy-line";
 
 describe("buildWavyLine", () => {
+  it("throws for fewer than 2 points", () => {
+    expect(() => buildWavyLine([new THREE.Vector3(0, 0, 0)])).toThrow(/at least 2 points/);
+  });
+
   it("keeps endpoints exactly on the original path", () => {
     const points = [new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 0, -2)].map((p) =>
       Array.from({ length: 20 }, (_, i) => p.clone()),
