@@ -9,7 +9,7 @@ export function entityWorldPos(
 ): THREE.Vector3 {
   const entityState = state.entities.find((e) => e.entity_ref === entityRef);
   if (!entityState) {
-    throw new Error(`resolveActionPath: no entity state for entity_ref "${entityRef}" in frame state`);
+    throw new Error(`entityWorldPos: no entity state for entity_ref "${entityRef}" in frame state`);
   }
   return transformer.resolveToWorld(entityState.position);
 }
