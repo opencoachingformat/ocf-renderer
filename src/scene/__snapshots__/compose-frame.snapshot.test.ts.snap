@@ -269,6 +269,50 @@ exports[`composeFrame scene-graph snapshots > matches snapshot for fixture: full
         },
         {
           "children": [],
+          "name": "paint-near",
+          "position": [
+            0,
+            0,
+            0,
+          ],
+          "rotationY": 0,
+          "type": "Line",
+        },
+        {
+          "children": [],
+          "name": "free-throw-circle-near",
+          "position": [
+            0,
+            0,
+            0,
+          ],
+          "rotationY": 0,
+          "type": "LineLoop",
+        },
+        {
+          "children": [],
+          "name": "three-point-arc-near",
+          "position": [
+            0,
+            0,
+            0,
+          ],
+          "rotationY": 0,
+          "type": "Line",
+        },
+        {
+          "children": [],
+          "name": "backboard-near",
+          "position": [
+            0,
+            0,
+            12.425,
+          ],
+          "rotationY": 0,
+          "type": "Mesh",
+        },
+        {
+          "children": [],
           "name": "center-circle",
           "position": [
             0,
