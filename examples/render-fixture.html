@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>OCF Renderer — fixture preview</title>
+    <style>
+      html, body {
+        margin: 0;
+        padding: 0;
+        background: #ffffff;
+      }
+      canvas {
+        display: block;
+        width: 800px;
+        height: 600px;
+      }
+    </style>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "../node_modules/three/build/three.module.js"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <canvas id="stage" width="800" height="600"></canvas>
+    <script type="module">
+      import { OCFRenderer } from "../dist/index.js";
+
+      async function main() {
+        const params = new URLSearchParams(window.location.search);
+        const fixture = params.get("fixture");
+        if (!fixture) {
+          throw new Error("render-fixture.html: missing required ?fixture= query param");
+        }
+
+        const response = await fetch(`../src/__fixtures__/${fixture}.json`);
+        if (!response.ok) {
+          throw new Error(`render-fixture.html: failed to fetch fixture "${fixture}" (${response.status})`);
+        }
+        const doc = await response.json();
+
+        const canvas = document.getElementById("stage");
+        const renderer = new OCFRenderer(doc);
+        renderer.renderToCanvas(0, canvas);
+        canvas.dataset.rendered = "true";
+      }
+
+      main().catch((error) => {
+        document.body.textContent = `Error: ${error.message}`;
+        console.error(error);
+      });
+    </script>
+  </body>
+</html>
