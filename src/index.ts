@@ -1,2 +1,3 @@
-// src/index.ts
-export const OCF_RENDERER_VERSION = "0.0.0";
+export { OCFRenderer, type OCFRendererOptions } from "./render";
+export type { ViewMode, RenderFrameResult } from "./view-modes/view-mode-controller";
+export type * from "./types/ocf";
