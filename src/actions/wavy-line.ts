@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { tangentBetween, perpendicularOf } from "../paths/tangent";
 
 const WAVELENGTH_M = 0.6;
 const AMPLITUDE_M = 0.12;
@@ -24,8 +25,8 @@ export function buildWavyLine(points: THREE.Vector3[], color = "#222222"): THREE
     if (i === 0 || i === points.length - 1) return p.clone();
     const prev = points[Math.max(0, i - 1)];
     const next = points[Math.min(points.length - 1, i + 1)];
-    const tangent = new THREE.Vector3().subVectors(next, prev).setY(0).normalize();
-    const normal = new THREE.Vector3(-tangent.z, 0, tangent.x);
+    const tangent = tangentBetween(prev, next);
+    const normal = perpendicularOf(tangent);
     const t = totalLength > 0 ? cumulative[i] / totalLength : 0;
     const displacement = amplitude * Math.sin(2 * Math.PI * cycles * t);
     return p.clone().addScaledVector(normal, displacement);

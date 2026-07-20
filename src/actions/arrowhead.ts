@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { tangentBetween } from "../paths/tangent";
 
 const ARROWHEAD_LENGTH_M = 0.25;
 
@@ -11,7 +12,7 @@ export function trimPathEnd(
 ): { points: THREE.Vector3[]; endTangent: THREE.Vector3 } {
   const last = points[points.length - 1];
   const prev = points[points.length - 2] ?? points[0];
-  const tangent = new THREE.Vector3().subVectors(last, prev).setY(0).normalize();
+  const tangent = tangentBetween(prev, last);
   const trimmedEnd = last.clone().addScaledVector(tangent, -distance);
   return { points: [...points.slice(0, -1), trimmedEnd], endTangent: tangent };
 }

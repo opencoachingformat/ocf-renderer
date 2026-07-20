@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { tangentBetween, perpendicularOf } from "../paths/tangent";
 
 const SCREEN_BAR_HALF_LENGTH_M = 0.3;
 
@@ -19,8 +20,8 @@ export function buildScreenLine(points: THREE.Vector3[], color = "#222222"): THR
 
   const end = points[points.length - 1];
   const prev = points[points.length - 2];
-  const tangent = new THREE.Vector3().subVectors(end, prev).setY(0).normalize();
-  const normal = new THREE.Vector3(-tangent.z, 0, tangent.x);
+  const tangent = tangentBetween(prev, end);
+  const normal = perpendicularOf(tangent);
   const barPoints = [
     end.clone().addScaledVector(normal, SCREEN_BAR_HALF_LENGTH_M),
     end.clone().addScaledVector(normal, -SCREEN_BAR_HALF_LENGTH_M),
