@@ -1,0 +1,23 @@
+{
+  "version": "1.0",
+  "court": { "ruleset": "fiba", "type": "half_court" },
+  "entities": [
+    { "id": "o1", "type": "offense", "number": 23 },
+    { "id": "d1", "type": "defense" }
+  ],
+  "frames": [
+    {
+      "id": "f1",
+      "start_state": {
+        "entities": [
+          { "entity_ref": "o1", "position": { "x": 0, "y": 9 } },
+          { "entity_ref": "d1", "position": { "x": 0.5, "y": 9.5 }, "rotation": 0 }
+        ],
+        "ball": { "status": "carried", "carried_by": "o1" }
+      },
+      "actions": [
+        { "type": "shoot", "entity_ref": "o1" }
+      ]
+    }
+  ]
+}

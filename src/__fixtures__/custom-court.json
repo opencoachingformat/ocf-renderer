@@ -1,0 +1,30 @@
+{
+  "version": "1.0",
+  "court": {
+    "ruleset": "custom",
+    "type": "half_court",
+    "custom_dimensions": {
+      "length": 26,
+      "width": 14,
+      "basket_from_baseline": 1.2,
+      "three_point_distance": 6.6,
+      "paint_width": 4.9,
+      "paint_depth": 5.8,
+      "free_throw_distance": 5.8
+    }
+  },
+  "entities": [
+    { "id": "o1", "type": "offense", "number": 5 }
+  ],
+  "frames": [
+    {
+      "id": "f1",
+      "start_state": {
+        "entities": [
+          { "entity_ref": "o1", "position": { "x": 0, "y": 4 } }
+        ],
+        "ball": { "status": "carried", "carried_by": "o1" }
+      }
+    }
+  ]
+}

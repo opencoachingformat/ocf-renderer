@@ -1,0 +1,28 @@
+{
+  "version": "1.0",
+  "court": { "ruleset": "fiba", "type": "half_court" },
+  "entities": [
+    { "id": "o1", "type": "offense", "number": 1 },
+    { "id": "o2", "type": "offense", "number": 2 },
+    { "id": "o3", "type": "offense", "number": 3 },
+    { "id": "d1", "type": "defense" }
+  ],
+  "frames": [
+    {
+      "id": "f1",
+      "start_state": {
+        "entities": [
+          { "entity_ref": "o1", "position": { "x": -3, "y": 4 } },
+          { "entity_ref": "o2", "position": { "x": 3, "y": 4 } },
+          { "entity_ref": "o3", "position": { "x": 1, "y": 3 } },
+          { "entity_ref": "d1", "position": { "x": 0, "y": 5 }, "rotation": 90 }
+        ],
+        "ball": { "status": "carried", "carried_by": "o1" }
+      },
+      "actions": [
+        { "type": "pass", "entity_ref": "o1", "to_entity_ref": "o2" },
+        { "type": "screen", "entity_ref": "o3", "at": { "x": 1.5, "y": 5.5 } }
+      ]
+    }
+  ]
+}

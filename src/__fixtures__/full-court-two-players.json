@@ -1,0 +1,23 @@
+{
+  "version": "1.0",
+  "court": { "ruleset": "fiba", "type": "full_court" },
+  "entities": [
+    { "id": "o1", "type": "offense", "number": 10 },
+    { "id": "o2", "type": "offense", "number": 11 }
+  ],
+  "frames": [
+    {
+      "id": "f1",
+      "start_state": {
+        "entities": [
+          { "entity_ref": "o1", "position": { "x": 0, "y": -10 } },
+          { "entity_ref": "o2", "position": { "x": 2, "y": 8 } }
+        ],
+        "ball": { "status": "carried", "carried_by": "o1" }
+      },
+      "actions": [
+        { "type": "move", "entity_ref": "o1", "moves": [{ "to": { "x": 0, "y": 10 } }] }
+      ]
+    }
+  ]
+}
