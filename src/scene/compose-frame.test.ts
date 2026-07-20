@@ -61,7 +61,8 @@ describe("composeFrame", () => {
     const scene = composeFrame(doc, 0);
     const actions = scene.getObjectByName("actions")!;
     expect(actions.getObjectByName("shoot-glyph")).toBeInstanceOf(THREE.Group);
-    expect(actions.getObjectByName("move-path")).toBeNull();
-    expect(actions.getObjectByName("dribble-path")).toBeNull();
+    // three.js's getObjectByName returns undefined (never null) when no match is found.
+    expect(actions.getObjectByName("move-path")).toBeUndefined();
+    expect(actions.getObjectByName("dribble-path")).toBeUndefined();
   });
 });
