@@ -1,6 +1,10 @@
 # OCF Renderer — Design
 
-**Status:** Approved (brainstorming complete)
+**Status:** Superseded — see `2026-07-20-ocf-renderer-threejs-design.md`.
+The project pivoted from an SVG-string renderer to a Three.js-based renderer
+supporting both a static 2D print mode and a future 3D animated mode. Kept for
+history; the FIBA notation conventions documented here (defender rotation,
+dribble wave requirements, ball offset, etc.) carry forward into the new design.
 **Date:** 2026-06-06
 **Depends on:** OCF spec (`opencoachingformat/spec`), schema `v1.json` @ `5e18b5d`;
 defender-rotation convention from spec PR #5.
