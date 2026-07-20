@@ -1,0 +1,1575 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`composeFrame scene-graph snapshots > matches snapshot for fixture: custom-court 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "court-floor",
+          "position": [
+            0,
+            0,
+            -6.5,
+          ],
+          "rotationY": 0,
+          "type": "Mesh",
+        },
+        {
+          "children": [],
+          "name": "boundary",
+          "position": [
+            0,
+            0,
+            0,
+          ],
+          "rotationY": 0,
+          "type": "LineLoop",
+        },
+        {
+          "children": [],
+          "name": "paint",
+          "position": [
+            0,
+            0,
+            0,
+          ],
+          "rotationY": 0,
+          "type": "Line",
+        },
+        {
+          "children": [],
+          "name": "free-throw-circle",
+          "position": [
+            0,
+            0,
+            0,
+          ],
+          "rotationY": 0,
+          "type": "LineLoop",
+        },
+        {
+          "children": [],
+          "name": "three-point-arc",
+          "position": [
+            0,
+            0,
+            0,
+          ],
+          "rotationY": 0,
+          "type": "Line",
+        },
+        {
+          "children": [],
+          "name": "backboard",
+          "position": [
+            0,
+            0,
+            -11.8,
+          ],
+          "rotationY": 0,
+          "type": "Mesh",
+        },
+      ],
+      "name": "court",
+      "position": [
+        0,
+        0,
+        0,
+      ],
+      "rotationY": 0,
+      "type": "Group",
+    },
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "offense-fill",
+              "position": [
+                0,
+                0,
+                0,
+              ],
+              "rotationY": 0,
+              "type": "Mesh",
+            },
+            {
+              "children": [],
+              "name": "offense-ring",
+              "position": [
+                0,
+                0.005,
+                0,
+              ],
+              "rotationY": 0,
+              "type": "LineLoop",
+            },
+            {
+              "children": [],
+              "name": "jersey-number",
+              "position": [
+                0,
+                0.01,
+                0,
+              ],
+              "rotationY": 0,
+              "type": "Sprite",
+            },
+          ],
+          "name": "offense-symbol",
+          "position": [
+            0,
+            0,
+            -4,
+          ],
+          "rotationY": 0,
+          "type": "Group",
+        },
+      ],
+      "name": "entities",
+      "position": [
+        0,
+        0,
+        0,
+      ],
+      "rotationY": 0,
+      "type": "Group",
+    },
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "ball-fill",
+              "position": [
+                0,
+                0.01,
+                0,
+              ],
+              "rotationY": 0,
+              "type": "Mesh",
+            },
+          ],
+          "name": "ball-symbol",
+          "position": [
+            -0.25,
+            0,
+            -4.35,
+          ],
+          "rotationY": 0,
+          "type": "Group",
+        },
+      ],
+      "name": "ball",
+      "position": [
+        0,
+        0,
+        0,
+      ],
+      "rotationY": 0,
+      "type": "Group",
+    },
+    {
+      "children": [],
+      "name": "actions",
+      "position": [
+        0,
+        0,
+        0,
+      ],
+      "rotationY": 0,
+      "type": "Group",
+    },
+  ],
+  "name": "Scene",
+  "position": [
+    0,
+    0,
+    0,
+  ],
+  "rotationY": 0,
+  "type": "Scene",
+}
+`;
+
+exports[`composeFrame scene-graph snapshots > matches snapshot for fixture: full-court-two-players 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "court-floor",
+          "position": [
+            0,
+            0,
+            -0,
+          ],
+          "rotationY": 0,
+          "type": "Mesh",
+        },
+        {
+          "children": [],
+          "name": "boundary",
+          "position": [
+            0,
+            0,
+            0,
+          ],
+          "rotationY": 0,
+          "type": "LineLoop",
+        },
+        {
+          "children": [],
+          "name": "paint",
+          "position": [
+            0,
+            0,
+            0,
+          ],
+          "rotationY": 0,
+          "type": "Line",
+        },
+        {
+          "children": [],
+          "name": "free-throw-circle",
+          "position": [
+            0,
+            0,
+            0,
+          ],
+          "rotationY": 0,
+          "type": "LineLoop",
+        },
+        {
+          "children": [],
+          "name": "three-point-arc",
+          "position": [
+            0,
+            0,
+            0,
+          ],
+          "rotationY": 0,
+          "type": "Line",
+        },
+        {
+          "children": [],
+          "name": "backboard",
+          "position": [
+            0,
+            0,
+            -12.425,
+          ],
+          "rotationY": 0,
+          "type": "Mesh",
+        },
+        {
+          "children": [],
+          "name": "center-circle",
+          "position": [
+            0,
+            0,
+            0,
+          ],
+          "rotationY": 0,
+          "type": "LineLoop",
+        },
+      ],
+      "name": "court",
+      "position": [
+        0,
+        0,
+        0,
+      ],
+      "rotationY": 0,
+      "type": "Group",
+    },
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "offense-fill",
+              "position": [
+                0,
+                0,
+                0,
+              ],
+              "rotationY": 0,
+              "type": "Mesh",
+            },
+            {
+              "children": [],
+              "name": "offense-ring",
+              "position": [
+                0,
+                0.005,
+                0,
+              ],
+              "rotationY": 0,
+              "type": "LineLoop",
+            },
+            {
+              "children": [],
+              "name": "jersey-number",
+              "position": [
+                0,
+                0.01,
+                0,
+              ],
+              "rotationY": 0,
+              "type": "Sprite",
+            },
+          ],
+          "name": "offense-symbol",
+          "position": [
+            0,
+            0,
+            10,
+          ],
+          "rotationY": 0,
+          "type": "Group",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "offense-fill",
+              "position": [
+                0,
+                0,
+                0,
+              ],
+              "rotationY": 0,
+              "type": "Mesh",
+            },
+            {
+              "children": [],
+              "name": "offense-ring",
+              "position": [
+                0,
+                0.005,
+                0,
+              ],
+              "rotationY": 0,
+              "type": "LineLoop",
+            },
+            {
+              "children": [],
+              "name": "jersey-number",
+              "position": [
+                0,
+                0.01,
+                0,
+              ],
+              "rotationY": 0,
+              "type": "Sprite",
+            },
+          ],
+          "name": "offense-symbol",
+          "position": [
+            2,
+            0,
+            -8,
+          ],
+          "rotationY": 0,
+          "type": "Group",
+        },
+      ],
+      "name": "entities",
+      "position": [
+        0,
+        0,
+        0,
+      ],
+      "rotationY": 0,
+      "type": "Group",
+    },
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "ball-fill",
+              "position": [
+                0,
+                0.01,
+                0,
+              ],
+              "rotationY": 0,
+              "type": "Mesh",
+            },
+          ],
+          "name": "ball-symbol",
+          "position": [
+            -0.25,
+            0,
+            9.65,
+          ],
+          "rotationY": 0,
+          "type": "Group",
+        },
+      ],
+      "name": "ball",
+      "position": [
+        0,
+        0,
+        0,
+      ],
+      "rotationY": 0,
+      "type": "Group",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "move-path",
+          "position": [
+            0,
+            0,
+            0,
+          ],
+          "rotationY": 0,
+          "type": "Line",
+        },
+        {
+          "children": [],
+          "name": "arrowhead",
+          "position": [
+            0,
+            0,
+            -9.525,
+          ],
+          "rotationY": 0,
+          "type": "Mesh",
+        },
+      ],
+      "name": "actions",
+      "position": [
+        0,
+        0,
+        0,
+      ],
+      "rotationY": 0,
+      "type": "Group",
+    },
+  ],
+  "name": "Scene",
+  "position": [
+    0,
+    0,
+    0,
+  ],
+  "rotationY": 0,
+  "type": "Scene",
+}
+`;
+
+exports[`composeFrame scene-graph snapshots > matches snapshot for fixture: pass-and-screen 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "court-floor",
+          "position": [
+            0,
+            0,
+            -7,
+          ],
+          "rotationY": 0,
+          "type": "Mesh",
+        },
+        {
+          "children": [],
+          "name": "boundary",
+          "position": [
+            0,
+            0,
+            0,
+          ],
+          "rotationY": 0,
+          "type": "LineLoop",
+        },
+        {
+          "children": [],
+          "name": "paint",
+          "position": [
+            0,
+            0,
+            0,
+          ],
+          "rotationY": 0,
+          "type": "Line",
+        },
+        {
+          "children": [],
+          "name": "free-throw-circle",
+          "position": [
+            0,
+            0,
+            0,
+          ],
+          "rotationY": 0,
+          "type": "LineLoop",
+        },
+        {
+          "children": [],
+          "name": "three-point-arc",
+          "position": [
+            0,
+            0,
+            0,
+          ],
+          "rotationY": 0,
+          "type": "Line",
+        },
+        {
+          "children": [],
+          "name": "backboard",
+          "position": [
+            0,
+            0,
+            -12.425,
+          ],
+          "rotationY": 0,
+          "type": "Mesh",
+        },
+      ],
+      "name": "court",
+      "position": [
+        0,
+        0,
+        0,
+      ],
+      "rotationY": 0,
+      "type": "Group",
+    },
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "offense-fill",
+              "position": [
+                0,
+                0,
+                0,
+              ],
+              "rotationY": 0,
+              "type": "Mesh",
+            },
+            {
+              "children": [],
+              "name": "offense-ring",
+              "position": [
+                0,
+                0.005,
+                0,
+              ],
+              "rotationY": 0,
+              "type": "LineLoop",
+            },
+            {
+              "children": [],
+              "name": "jersey-number",
+              "position": [
+                0,
+                0.01,
+                0,
+              ],
+              "rotationY": 0,
+              "type": "Sprite",
+            },
+          ],
+          "name": "offense-symbol",
+          "position": [
+            -3,
+            0,
+            -4,
+          ],
+          "rotationY": 0,
+          "type": "Group",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "offense-fill",
+              "position": [
+                0,
+                0,
+                0,
+              ],
+              "rotationY": 0,
+              "type": "Mesh",
+            },
+            {
+              "children": [],
+              "name": "offense-ring",
+              "position": [
+                0,
+                0.005,
+                0,
+              ],
+              "rotationY": 0,
+              "type": "LineLoop",
+            },
+            {
+              "children": [],
+              "name": "jersey-number",
+              "position": [
+                0,
+                0.01,
+                0,
+              ],
+              "rotationY": 0,
+              "type": "Sprite",
+            },
+          ],
+          "name": "offense-symbol",
+          "position": [
+            3,
+            0,
+            -4,
+          ],
+          "rotationY": 0,
+          "type": "Group",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "offense-fill",
+              "position": [
+                0,
+                0,
+                0,
+              ],
+              "rotationY": 0,
+              "type": "Mesh",
+            },
+            {
+              "children": [],
+              "name": "offense-ring",
+              "position": [
+                0,
+                0.005,
+                0,
+              ],
+              "rotationY": 0,
+              "type": "LineLoop",
+            },
+            {
+              "children": [],
+              "name": "jersey-number",
+              "position": [
+                0,
+                0.01,
+                0,
+              ],
+              "rotationY": 0,
+              "type": "Sprite",
+            },
+          ],
+          "name": "offense-symbol",
+          "position": [
+            1,
+            0,
+            -3,
+          ],
+          "rotationY": 0,
+          "type": "Group",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "defense-body",
+              "position": [
+                0,
+                0,
+                0,
+              ],
+              "rotationY": 0,
+              "type": "Mesh",
+            },
+            {
+              "children": [],
+              "name": "defense-arms",
+              "position": [
+                0,
+                0,
+                0,
+              ],
+              "rotationY": 0,
+              "type": "Line",
+            },
+          ],
+          "name": "defense-symbol",
+          "position": [
+            0,
+            0,
+            -5,
+          ],
+          "rotationY": 1.571,
+          "type": "Group",
+        },
+      ],
+      "name": "entities",
+      "position": [
+        0,
+        0,
+        0,
+      ],
+      "rotationY": 0,
+      "type": "Group",
+    },
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "ball-fill",
+              "position": [
+                0,
+                0.01,
+                0,
+              ],
+              "rotationY": 0,
+              "type": "Mesh",
+            },
+          ],
+          "name": "ball-symbol",
+          "position": [
+            -3.25,
+            0,
+            -4.35,
+          ],
+          "rotationY": 0,
+          "type": "Group",
+        },
+      ],
+      "name": "ball",
+      "position": [
+        0,
+        0,
+        0,
+      ],
+      "rotationY": 0,
+      "type": "Group",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "pass-path",
+          "position": [
+            0,
+            0,
+            0,
+          ],
+          "rotationY": 0,
+          "type": "Line",
+        },
+        {
+          "children": [],
+          "name": "arrowhead",
+          "position": [
+            2.525,
+            0,
+            -4,
+          ],
+          "rotationY": 0,
+          "type": "Mesh",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "screen-line",
+              "position": [
+                0,
+                0,
+                0,
+              ],
+              "rotationY": 0,
+              "type": "Line",
+            },
+            {
+              "children": [],
+              "name": "screen-bar",
+              "position": [
+                0,
+                0,
+                0,
+              ],
+              "rotationY": 0,
+              "type": "Line",
+            },
+          ],
+          "name": "screen-path",
+          "position": [
+            0,
+            0,
+            0,
+          ],
+          "rotationY": 0,
+          "type": "Group",
+        },
+      ],
+      "name": "actions",
+      "position": [
+        0,
+        0,
+        0,
+      ],
+      "rotationY": 0,
+      "type": "Group",
+    },
+  ],
+  "name": "Scene",
+  "position": [
+    0,
+    0,
+    0,
+  ],
+  "rotationY": 0,
+  "type": "Scene",
+}
+`;
+
+exports[`composeFrame scene-graph snapshots > matches snapshot for fixture: shoot 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "court-floor",
+          "position": [
+            0,
+            0,
+            -7,
+          ],
+          "rotationY": 0,
+          "type": "Mesh",
+        },
+        {
+          "children": [],
+          "name": "boundary",
+          "position": [
+            0,
+            0,
+            0,
+          ],
+          "rotationY": 0,
+          "type": "LineLoop",
+        },
+        {
+          "children": [],
+          "name": "paint",
+          "position": [
+            0,
+            0,
+            0,
+          ],
+          "rotationY": 0,
+          "type": "Line",
+        },
+        {
+          "children": [],
+          "name": "free-throw-circle",
+          "position": [
+            0,
+            0,
+            0,
+          ],
+          "rotationY": 0,
+          "type": "LineLoop",
+        },
+        {
+          "children": [],
+          "name": "three-point-arc",
+          "position": [
+            0,
+            0,
+            0,
+          ],
+          "rotationY": 0,
+          "type": "Line",
+        },
+        {
+          "children": [],
+          "name": "backboard",
+          "position": [
+            0,
+            0,
+            -12.425,
+          ],
+          "rotationY": 0,
+          "type": "Mesh",
+        },
+      ],
+      "name": "court",
+      "position": [
+        0,
+        0,
+        0,
+      ],
+      "rotationY": 0,
+      "type": "Group",
+    },
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "offense-fill",
+              "position": [
+                0,
+                0,
+                0,
+              ],
+              "rotationY": 0,
+              "type": "Mesh",
+            },
+            {
+              "children": [],
+              "name": "offense-ring",
+              "position": [
+                0,
+                0.005,
+                0,
+              ],
+              "rotationY": 0,
+              "type": "LineLoop",
+            },
+            {
+              "children": [],
+              "name": "jersey-number",
+              "position": [
+                0,
+                0.01,
+                0,
+              ],
+              "rotationY": 0,
+              "type": "Sprite",
+            },
+          ],
+          "name": "offense-symbol",
+          "position": [
+            0,
+            0,
+            -9,
+          ],
+          "rotationY": 0,
+          "type": "Group",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "defense-body",
+              "position": [
+                0,
+                0,
+                0,
+              ],
+              "rotationY": 0,
+              "type": "Mesh",
+            },
+            {
+              "children": [],
+              "name": "defense-arms",
+              "position": [
+                0,
+                0,
+                0,
+              ],
+              "rotationY": 0,
+              "type": "Line",
+            },
+          ],
+          "name": "defense-symbol",
+          "position": [
+            0.5,
+            0,
+            -9.5,
+          ],
+          "rotationY": 0,
+          "type": "Group",
+        },
+      ],
+      "name": "entities",
+      "position": [
+        0,
+        0,
+        0,
+      ],
+      "rotationY": 0,
+      "type": "Group",
+    },
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "ball-fill",
+              "position": [
+                0,
+                0.01,
+                0,
+              ],
+              "rotationY": 0,
+              "type": "Mesh",
+            },
+          ],
+          "name": "ball-symbol",
+          "position": [
+            -0.25,
+            0,
+            -9.35,
+          ],
+          "rotationY": 0,
+          "type": "Group",
+        },
+      ],
+      "name": "ball",
+      "position": [
+        0,
+        0,
+        0,
+      ],
+      "rotationY": 0,
+      "type": "Group",
+    },
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "defense-body",
+              "position": [
+                0,
+                0,
+                0,
+              ],
+              "rotationY": 0,
+              "type": "Mesh",
+            },
+            {
+              "children": [],
+              "name": "defense-arms",
+              "position": [
+                0,
+                0,
+                0,
+              ],
+              "rotationY": 0,
+              "type": "Line",
+            },
+          ],
+          "name": "shoot-glyph",
+          "position": [
+            0,
+            0,
+            -9,
+          ],
+          "rotationY": 0,
+          "type": "Group",
+        },
+      ],
+      "name": "actions",
+      "position": [
+        0,
+        0,
+        0,
+      ],
+      "rotationY": 0,
+      "type": "Group",
+    },
+  ],
+  "name": "Scene",
+  "position": [
+    0,
+    0,
+    0,
+  ],
+  "rotationY": 0,
+  "type": "Scene",
+}
+`;
+
+exports[`composeFrame scene-graph snapshots > matches snapshot for fixture: simple-cut 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "court-floor",
+          "position": [
+            0,
+            0,
+            -7,
+          ],
+          "rotationY": 0,
+          "type": "Mesh",
+        },
+        {
+          "children": [],
+          "name": "boundary",
+          "position": [
+            0,
+            0,
+            0,
+          ],
+          "rotationY": 0,
+          "type": "LineLoop",
+        },
+        {
+          "children": [],
+          "name": "paint",
+          "position": [
+            0,
+            0,
+            0,
+          ],
+          "rotationY": 0,
+          "type": "Line",
+        },
+        {
+          "children": [],
+          "name": "free-throw-circle",
+          "position": [
+            0,
+            0,
+            0,
+          ],
+          "rotationY": 0,
+          "type": "LineLoop",
+        },
+        {
+          "children": [],
+          "name": "three-point-arc",
+          "position": [
+            0,
+            0,
+            0,
+          ],
+          "rotationY": 0,
+          "type": "Line",
+        },
+        {
+          "children": [],
+          "name": "backboard",
+          "position": [
+            0,
+            0,
+            -12.425,
+          ],
+          "rotationY": 0,
+          "type": "Mesh",
+        },
+      ],
+      "name": "court",
+      "position": [
+        0,
+        0,
+        0,
+      ],
+      "rotationY": 0,
+      "type": "Group",
+    },
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "offense-fill",
+              "position": [
+                0,
+                0,
+                0,
+              ],
+              "rotationY": 0,
+              "type": "Mesh",
+            },
+            {
+              "children": [],
+              "name": "offense-ring",
+              "position": [
+                0,
+                0.005,
+                0,
+              ],
+              "rotationY": 0,
+              "type": "LineLoop",
+            },
+            {
+              "children": [],
+              "name": "jersey-number",
+              "position": [
+                0,
+                0.01,
+                0,
+              ],
+              "rotationY": 0,
+              "type": "Sprite",
+            },
+          ],
+          "name": "offense-symbol",
+          "position": [
+            1,
+            0,
+            -4,
+          ],
+          "rotationY": 0,
+          "type": "Group",
+        },
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "defense-body",
+              "position": [
+                0,
+                0,
+                0,
+              ],
+              "rotationY": 0,
+              "type": "Mesh",
+            },
+            {
+              "children": [],
+              "name": "defense-arms",
+              "position": [
+                0,
+                0,
+                0,
+              ],
+              "rotationY": 0,
+              "type": "Line",
+            },
+          ],
+          "name": "defense-symbol",
+          "position": [
+            1.5,
+            0,
+            -5,
+          ],
+          "rotationY": 3.142,
+          "type": "Group",
+        },
+      ],
+      "name": "entities",
+      "position": [
+        0,
+        0,
+        0,
+      ],
+      "rotationY": 0,
+      "type": "Group",
+    },
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "ball-fill",
+              "position": [
+                0,
+                0.01,
+                0,
+              ],
+              "rotationY": 0,
+              "type": "Mesh",
+            },
+          ],
+          "name": "ball-symbol",
+          "position": [
+            0.75,
+            0,
+            -4.35,
+          ],
+          "rotationY": 0,
+          "type": "Group",
+        },
+      ],
+      "name": "ball",
+      "position": [
+        0,
+        0,
+        0,
+      ],
+      "rotationY": 0,
+      "type": "Group",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "move-path",
+          "position": [
+            0,
+            0,
+            0,
+          ],
+          "rotationY": 0,
+          "type": "Line",
+        },
+        {
+          "children": [],
+          "name": "arrowhead",
+          "position": [
+            -1.605,
+            0,
+            -5.737,
+          ],
+          "rotationY": 0,
+          "type": "Mesh",
+        },
+      ],
+      "name": "actions",
+      "position": [
+        0,
+        0,
+        0,
+      ],
+      "rotationY": 0,
+      "type": "Group",
+    },
+  ],
+  "name": "Scene",
+  "position": [
+    0,
+    0,
+    0,
+  ],
+  "rotationY": 0,
+  "type": "Scene",
+}
+`;
+
+exports[`composeFrame scene-graph snapshots > matches snapshot for fixture: simple-dribble 1`] = `
+{
+  "children": [
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "court-floor",
+          "position": [
+            0,
+            0,
+            -7,
+          ],
+          "rotationY": 0,
+          "type": "Mesh",
+        },
+        {
+          "children": [],
+          "name": "boundary",
+          "position": [
+            0,
+            0,
+            0,
+          ],
+          "rotationY": 0,
+          "type": "LineLoop",
+        },
+        {
+          "children": [],
+          "name": "paint",
+          "position": [
+            0,
+            0,
+            0,
+          ],
+          "rotationY": 0,
+          "type": "Line",
+        },
+        {
+          "children": [],
+          "name": "free-throw-circle",
+          "position": [
+            0,
+            0,
+            0,
+          ],
+          "rotationY": 0,
+          "type": "LineLoop",
+        },
+        {
+          "children": [],
+          "name": "three-point-arc",
+          "position": [
+            0,
+            0,
+            0,
+          ],
+          "rotationY": 0,
+          "type": "Line",
+        },
+        {
+          "children": [],
+          "name": "backboard",
+          "position": [
+            0,
+            0,
+            -12.425,
+          ],
+          "rotationY": 0,
+          "type": "Mesh",
+        },
+      ],
+      "name": "court",
+      "position": [
+        0,
+        0,
+        0,
+      ],
+      "rotationY": 0,
+      "type": "Group",
+    },
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "offense-fill",
+              "position": [
+                0,
+                0,
+                0,
+              ],
+              "rotationY": 0,
+              "type": "Mesh",
+            },
+            {
+              "children": [],
+              "name": "offense-ring",
+              "position": [
+                0,
+                0.005,
+                0,
+              ],
+              "rotationY": 0,
+              "type": "LineLoop",
+            },
+            {
+              "children": [],
+              "name": "jersey-number",
+              "position": [
+                0,
+                0.01,
+                0,
+              ],
+              "rotationY": 0,
+              "type": "Sprite",
+            },
+          ],
+          "name": "offense-symbol",
+          "position": [
+            0,
+            0,
+            -3,
+          ],
+          "rotationY": 0,
+          "type": "Group",
+        },
+      ],
+      "name": "entities",
+      "position": [
+        0,
+        0,
+        0,
+      ],
+      "rotationY": 0,
+      "type": "Group",
+    },
+    {
+      "children": [
+        {
+          "children": [
+            {
+              "children": [],
+              "name": "ball-fill",
+              "position": [
+                0,
+                0.01,
+                0,
+              ],
+              "rotationY": 0,
+              "type": "Mesh",
+            },
+          ],
+          "name": "ball-symbol",
+          "position": [
+            -0.25,
+            0,
+            -3.35,
+          ],
+          "rotationY": 0,
+          "type": "Group",
+        },
+      ],
+      "name": "ball",
+      "position": [
+        0,
+        0,
+        0,
+      ],
+      "rotationY": 0,
+      "type": "Group",
+    },
+    {
+      "children": [
+        {
+          "children": [],
+          "name": "dribble-path",
+          "position": [
+            0,
+            0,
+            0,
+          ],
+          "rotationY": 0,
+          "type": "Line",
+        },
+      ],
+      "name": "actions",
+      "position": [
+        0,
+        0,
+        0,
+      ],
+      "rotationY": 0,
+      "type": "Group",
+    },
+  ],
+  "name": "Scene",
+  "position": [
+    0,
+    0,
+    0,
+  ],
+  "rotationY": 0,
+  "type": "Scene",
+}
+`;
