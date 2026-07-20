@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>OCF Renderer — examples</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 2rem;
+        font-family: system-ui, sans-serif;
+        background: #f4f4f2;
+        color: #1a1a1a;
+      }
+      h1 {
+        font-size: 1.25rem;
+        margin-bottom: 0.25rem;
+      }
+      p.intro {
+        color: #555;
+        margin-top: 0;
+      }
+      ul {
+        list-style: none;
+        padding: 0;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 0.75rem;
+        max-width: 900px;
+      }
+      li a {
+        display: block;
+        padding: 0.75rem 1rem;
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        color: #1a1a1a;
+        text-decoration: none;
+      }
+      li a:hover {
+        border-color: #888;
+      }
+      li a code {
+        display: block;
+        color: #888;
+        font-size: 0.8rem;
+        margin-top: 0.25rem;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>OCF Renderer — fixture examples</h1>
+    <p class="intro">
+      Each link renders one fixture from <code>src/__fixtures__/</code> through
+      <code>OCFRenderer.renderToCanvas</code> in <code>tactical_print</code> mode.
+    </p>
+    <ul>
+      <li><a href="render-fixture.html?fixture=simple-cut">simple-cut<code>move action</code></a></li>
+      <li><a href="render-fixture.html?fixture=simple-dribble">simple-dribble<code>dribble action</code></a></li>
+      <li><a href="render-fixture.html?fixture=pass-and-screen">pass-and-screen<code>pass + screen actions</code></a></li>
+      <li><a href="render-fixture.html?fixture=shoot">shoot<code>shoot action</code></a></li>
+      <li><a href="render-fixture.html?fixture=full-court-two-players">full-court-two-players<code>full_court, both baskets</code></a></li>
+      <li><a href="render-fixture.html?fixture=custom-court">custom-court<code>custom_dimensions override</code></a></li>
+    </ul>
+  </body>
+</html>
