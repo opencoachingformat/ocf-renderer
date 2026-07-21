@@ -20,3 +20,16 @@ for (const fixture of fixtures) {
     await expect(page.locator("canvas")).toHaveScreenshot(`${fixture}.png`, { maxDiffPixelRatio: 0.001 });
   });
 }
+
+// Multi-frame fixture: one screenshot per frame, to cover a full play
+// sequence (screen -> roll -> pass/shoot) rather than just a single frame.
+const pickAndRollFrameCount = 3;
+for (let frameIndex = 0; frameIndex < pickAndRollFrameCount; frameIndex++) {
+  test(`tactical print: pick-and-roll frame ${frameIndex}`, async ({ page }) => {
+    await page.goto(`render-fixture.html?fixture=pick-and-roll&frame=${frameIndex}`);
+    await page.waitForSelector("canvas[data-rendered='true']");
+    await expect(page.locator("canvas")).toHaveScreenshot(`pick-and-roll-${frameIndex}.png`, {
+      maxDiffPixelRatio: 0.001,
+    });
+  });
+}

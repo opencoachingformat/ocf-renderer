@@ -1,0 +1,60 @@
+{
+  "version": "1.0",
+  "court": { "ruleset": "fiba", "type": "half_court" },
+  "entities": [
+    { "id": "o1", "type": "offense", "number": 1 },
+    { "id": "o2", "type": "offense", "number": 5 },
+    { "id": "d1", "type": "defense" },
+    { "id": "d2", "type": "defense" }
+  ],
+  "frames": [
+    {
+      "id": "f1",
+      "start_state": {
+        "entities": [
+          { "entity_ref": "o1", "position": { "x": -4, "y": 7 } },
+          { "entity_ref": "o2", "position": { "x": -1, "y": 8.5 } },
+          { "entity_ref": "d1", "position": { "x": -4, "y": 7.8 }, "rotation": 0 },
+          { "entity_ref": "d2", "position": { "x": -1, "y": 9.3 }, "rotation": 0 }
+        ],
+        "ball": { "status": "carried", "carried_by": "o1" }
+      },
+      "actions": [
+        { "type": "screen", "entity_ref": "o2", "at": { "x": -2, "y": 7.5 } },
+        { "type": "dribble", "entity_ref": "o1", "moves": [{ "to": { "x": -1, "y": 8 } }, { "to": { "x": 0, "y": 8 } }] }
+      ],
+      "end_state": {
+        "entities": [
+          { "entity_ref": "o1", "position": { "x": 0, "y": 8 } },
+          { "entity_ref": "o2", "position": { "x": -2, "y": 7.5 } },
+          { "entity_ref": "d1", "position": { "x": -1.5, "y": 6.8 }, "rotation": 0 },
+          { "entity_ref": "d2", "position": { "x": -1.8, "y": 8.3 }, "rotation": 0 }
+        ],
+        "ball": { "status": "carried", "carried_by": "o1" }
+      }
+    },
+    {
+      "id": "f2",
+      "actions": [
+        { "type": "cut", "entity_ref": "o2", "moves": [{ "to": { "x": 0.5, "y": 10 } }, { "to": { "x": 0.8, "y": 11.3 } }] },
+        { "type": "dribble", "entity_ref": "o1", "moves": [{ "to": { "x": 1, "y": 8.3 } }] }
+      ],
+      "end_state": {
+        "entities": [
+          { "entity_ref": "o1", "position": { "x": 1, "y": 8.3 } },
+          { "entity_ref": "o2", "position": { "x": 0.8, "y": 11.3 } },
+          { "entity_ref": "d1", "position": { "x": 0.7, "y": 7.6 }, "rotation": 0 },
+          { "entity_ref": "d2", "position": { "x": 1.2, "y": 10.8 }, "rotation": 0 }
+        ],
+        "ball": { "status": "carried", "carried_by": "o1" }
+      }
+    },
+    {
+      "id": "f3",
+      "actions": [
+        { "type": "pass", "entity_ref": "o1", "to_entity_ref": "o2" },
+        { "type": "shoot", "entity_ref": "o2" }
+      ]
+    }
+  ]
+}

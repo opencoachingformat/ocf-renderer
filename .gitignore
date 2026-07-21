@@ -10,3 +10,4 @@ __pycache__/
 # ocf-renderer build/test artifacts
 test-results
 playwright-report
+.playwright-mcp/

@@ -9,6 +9,7 @@ import passAndScreen from "./pass-and-screen.json";
 import shoot from "./shoot.json";
 import fullCourtTwoPlayers from "./full-court-two-players.json";
 import customCourt from "./custom-court.json";
+import pickAndRoll from "./pick-and-roll.json";
 
 const fixtures: Record<string, OcfDocument> = {
   "simple-cut": simpleCut as OcfDocument,
@@ -17,13 +18,16 @@ const fixtures: Record<string, OcfDocument> = {
   shoot: shoot as OcfDocument,
   "full-court-two-players": fullCourtTwoPlayers as OcfDocument,
   "custom-court": customCourt as OcfDocument,
+  "pick-and-roll": pickAndRoll as OcfDocument,
 };
 
 describe("fixtures", () => {
   for (const [name, doc] of Object.entries(fixtures)) {
-    it(`${name} parses and composes without error`, () => {
-      expect(() => resolveFrameState(doc, 0, "start")).not.toThrow();
-      expect(() => composeFrame(doc, 0)).not.toThrow();
-    });
+    for (let frameIndex = 0; frameIndex < doc.frames.length; frameIndex++) {
+      it(`${name} frame ${frameIndex} parses and composes without error`, () => {
+        expect(() => resolveFrameState(doc, frameIndex, "start")).not.toThrow();
+        expect(() => composeFrame(doc, frameIndex)).not.toThrow();
+      });
+    }
   }
 });

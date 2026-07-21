@@ -34,6 +34,7 @@
         if (!fixture) {
           throw new Error("render-fixture.html: missing required ?fixture= query param");
         }
+        const frameIndex = Number(params.get("frame") ?? "0");
 
         const response = await fetch(`../src/__fixtures__/${fixture}.json`);
         if (!response.ok) {
@@ -43,8 +44,36 @@
 
         const canvas = document.getElementById("stage");
         const renderer = new OCFRenderer(doc);
-        renderer.renderToCanvas(0, canvas);
+        renderer.renderToCanvas(frameIndex, canvas);
         canvas.dataset.rendered = "true";
+
+        if (doc.frames.length > 1) {
+          const nav = document.createElement("div");
+          nav.id = "frame-nav";
+          nav.style.cssText = "position:fixed;top:8px;left:8px;font-family:system-ui,sans-serif;font-size:14px;";
+
+          const makeLink = (label, targetFrame) => {
+            const el = document.createElement("a");
+            el.textContent = label;
+            el.href = `?fixture=${encodeURIComponent(fixture)}&frame=${targetFrame}`;
+            return el;
+          };
+          const makeDisabled = (label) => {
+            const el = document.createElement("span");
+            el.textContent = label;
+            el.style.color = "#aaa";
+            return el;
+          };
+
+          nav.appendChild(frameIndex > 0 ? makeLink("\u2190 prev", frameIndex - 1) : makeDisabled("\u2190 prev"));
+          nav.appendChild(document.createTextNode(`\u00a0\u00a0frame ${frameIndex + 1} / ${doc.frames.length}\u00a0\u00a0`));
+          nav.appendChild(
+            frameIndex < doc.frames.length - 1
+              ? makeLink("next \u2192", frameIndex + 1)
+              : makeDisabled("next \u2192"),
+          );
+          document.body.appendChild(nav);
+        }
       }
 
       main().catch((error) => {
