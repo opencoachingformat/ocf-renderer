@@ -1,45 +1,53 @@
 import * as THREE from "three";
-import type { Action, FrameState } from "../types/ocf";
+import type { Action } from "../types/ocf";
+import type { ResolvedFrameState } from "../parser/resolve-frame-state";
 import { CoordinateTransformer } from "../court/coordinate-transformer";
 
 export function entityWorldPos(
-  state: FrameState,
-  entityRef: string,
+  state: ResolvedFrameState,
+  ref: string,
   transformer: CoordinateTransformer,
 ): THREE.Vector3 {
-  const entityState = state.entities.find((e) => e.entity_ref === entityRef);
-  if (!entityState) {
-    throw new Error(`entityWorldPos: no entity state for entity_ref "${entityRef}" in frame state`);
+  const coord = state.positions[ref];
+  if (!coord) {
+    throw new Error(`entityWorldPos: no resolved position for entity ref "${ref}" in frame state`);
   }
-  return transformer.resolveToWorld(entityState.position);
+  return transformer.resolveToWorld(coord);
 }
 
-/** Returns null for actions with no path (shoot). */
+/** Returns null for actions with no drawn path (shoot/defend/rebound/pickup, or moves without `to`). */
 export function resolveActionPath(
   action: Action,
-  startState: FrameState,
+  startState: ResolvedFrameState,
   transformer: CoordinateTransformer,
 ): THREE.Vector3[] | null {
   switch (action.type) {
     case "move":
     case "cut":
     case "dribble": {
-      const start = entityWorldPos(startState, action.entity_ref, transformer);
-      const rest = action.moves.map((m) => transformer.resolveToWorld(m.to));
+      const start = entityWorldPos(startState, action.player, transformer);
+      const rest = action.moves
+        .filter((m) => m.to !== undefined)
+        .map((m) => transformer.resolveToWorld(m.to!));
+      if (rest.length === 0) return null; // move on the spot
       return [start, ...rest];
     }
-    case "pass":
-    case "hand_off": {
-      const start = entityWorldPos(startState, action.entity_ref, transformer);
-      const end = entityWorldPos(startState, action.to_entity_ref, transformer);
+    case "pass": {
+      const start = entityWorldPos(startState, action.player, transformer);
+      const end = entityWorldPos(startState, action.to_player, transformer);
       return [start, end];
     }
     case "screen": {
-      const start = entityWorldPos(startState, action.entity_ref, transformer);
-      const end = transformer.resolveToWorld(action.at);
+      const start = entityWorldPos(startState, action.player, transformer);
+      const end = action.at
+        ? transformer.resolveToWorld(action.at)
+        : entityWorldPos(startState, action.for_player, transformer);
       return [start, end];
     }
     case "shoot":
+    case "defend":
+    case "rebound":
+    case "pickup":
       return null;
     default: {
       const exhaustive: never = action;
