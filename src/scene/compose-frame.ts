@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import type { OcfDocument } from "../types/ocf";
+import { entityRef } from "../types/ocf";
 import { resolveFrameState } from "../parser/resolve-frame-state";
 import { CoordinateTransformer, resolveCourtDimensions } from "../court/coordinate-transformer";
 import { buildCourt } from "../court/build-court";
@@ -41,22 +42,22 @@ export function composeFrame(
   scene.add(entityGroup);
 
   const obstacles: Obstacle[] = [];
-  const symbolsByRef = new Map<string, THREE.Object3D>();
 
-  for (const entityState of startState.entities) {
-    const entityDef = doc.entities.find((e) => e.id === entityState.entity_ref);
-    if (!entityDef) continue;
-    const worldPos = transformer.resolveToWorld(entityState.position);
+  for (const entity of doc.entities) {
+    const ref = entityRef(entity);
+    const coord = startState.positions[ref];
+    if (!coord) continue;
+    const worldPos = transformer.resolveToWorld(coord);
 
     let symbol: THREE.Group;
     let radius = OFFENSE_SYMBOL_RADIUS_M;
-    switch (entityDef.type) {
+    switch (entity.type) {
       case "offense":
-        symbol = buildOffenseSymbol(colors.offense, entityDef.number);
+        symbol = buildOffenseSymbol(colors.offense, entity.label ?? entity.nr);
         break;
       case "defense":
         symbol = buildDefenseSymbol(colors.defense);
-        applyDefenseRotation(symbol, entityState.rotation ?? 0);
+        applyDefenseRotation(symbol, entity.rotation ?? 0);
         radius = DEFENSE_SYMBOL_HEIGHT_M / 2;
         break;
       case "coach":
@@ -65,35 +66,32 @@ export function composeFrame(
       case "cone":
         symbol = buildConeSymbol(colors.court_accent);
         break;
+      case "station":
+        continue; // acknowledged, not built — no station glyph yet
     }
     symbol.position.copy(worldPos);
     entityGroup.add(symbol);
-    symbolsByRef.set(entityDef.id, symbol);
     obstacles.push({ center: worldPos, radius });
   }
 
-  const ballState = startState.ball;
-  if (ballState) {
-    const ballGroup = new THREE.Group();
-    ballGroup.name = "ball";
-    if (ballState.status === "carried") {
-      const carrierState = startState.entities.find((e) => e.entity_ref === ballState.carried_by);
-      const carrierEntity = doc.entities.find((e) => e.id === carrierState?.entity_ref);
-      const carrierWorldPos = carrierState ? transformer.resolveToWorld(carrierState.position) : new THREE.Vector3();
-      // v1 simplification: always offset "forward" toward -Z (frontcourt), regardless
-      // of the carrier's actual action heading. The design doc's fuller rule ("forward
-      // = direction of the ball action") is deferred past v1 — see RESUME.md.
+  const ballGroup = new THREE.Group();
+  ballGroup.name = "balls";
+  scene.add(ballGroup);
+  for (const [ballId, ballState] of Object.entries(startState.balls)) {
+    if ("dead" in ballState) continue; // dead balls are not drawn
+    const ball = buildBallSymbol(colors.ball);
+    ball.name = ballId;
+    if ("carried_by" in ballState) {
+      const carrierCoord = startState.positions[ballState.carried_by];
+      const carrierWorldPos = carrierCoord ? transformer.resolveToWorld(carrierCoord) : new THREE.Vector3();
+      // v1 simplification: always offset "forward" toward -Z (frontcourt); schema
+      // entities carry no handedness data, so the offset is always right-handed.
       const forward = new THREE.Vector3(0, 0, -1);
-      const isLeftHanded = carrierEntity?.tags?.includes("left_handed") ?? false;
-      const ball = buildBallSymbol(colors.ball);
-      ball.position.copy(carriedBallOffset(carrierWorldPos, forward, isLeftHanded));
-      ballGroup.add(ball);
+      ball.position.copy(carriedBallOffset(carrierWorldPos, forward, false));
     } else {
-      const ball = buildBallSymbol(colors.ball);
-      ball.position.copy(transformer.resolveToWorld(ballState.position));
-      ballGroup.add(ball);
+      ball.position.copy(transformer.resolveToWorld(ballState.at));
     }
-    scene.add(ballGroup);
+    ballGroup.add(ball);
   }
 
   const actionGroup = new THREE.Group();
@@ -101,8 +99,10 @@ export function composeFrame(
   scene.add(actionGroup);
 
   for (const action of doc.frames[frameIndex].actions ?? []) {
+    if (action.type === "defend" || action.type === "rebound" || action.type === "pickup") continue;
+
     if (action.type === "shoot") {
-      const shooterPos = entityWorldPos(startState, action.entity_ref, transformer);
+      const shooterPos = entityWorldPos(startState, action.player, transformer);
       const basketPos = transformer.resolveToWorld({ named: "basket" });
       actionGroup.add(buildShootGlyph(shooterPos, basketPos, colors.offense));
       continue;
@@ -128,7 +128,7 @@ export function composeFrame(
       actionGroup.add(buildArrowhead(points[points.length - 1], endTangent, colors.offense));
     } else if (action.type === "dribble") {
       actionGroup.add(buildWavyLine(adjusted));
-    } else if (action.type === "pass" || action.type === "hand_off") {
+    } else if (action.type === "pass") {
       const { points, endTangent } = trimPathEnd(adjusted, OFFENSE_SYMBOL_RADIUS_M + 0.1);
       actionGroup.add(buildDashedLine(points, colors.offense));
       actionGroup.add(buildArrowhead(points[points.length - 1], endTangent, colors.offense));

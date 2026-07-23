@@ -2,8 +2,8 @@ import * as THREE from "three";
 
 export const OFFENSE_SYMBOL_RADIUS_M = 0.5;
 
-function numberSprite(number: number | undefined): THREE.Sprite | null {
-  if (number === undefined) return null;
+function numberSprite(label: string | number | undefined): THREE.Sprite | null {
+  if (label === undefined) return null;
   const canvas = document.createElement("canvas");
   canvas.width = 64;
   canvas.height = 64;
@@ -12,7 +12,7 @@ function numberSprite(number: number | undefined): THREE.Sprite | null {
   ctx.font = "bold 40px sans-serif";
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  ctx.fillText(String(number), 32, 34);
+  ctx.fillText(String(label), 32, 34);
   const texture = new THREE.CanvasTexture(canvas);
   const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: texture, depthTest: false }));
   sprite.scale.set(0.6, 0.6, 1);
@@ -21,7 +21,7 @@ function numberSprite(number: number | undefined): THREE.Sprite | null {
   return sprite;
 }
 
-export function buildOffenseSymbol(color: string, number?: number): THREE.Group {
+export function buildOffenseSymbol(color: string, label?: string | number): THREE.Group {
   const group = new THREE.Group();
   group.name = "offense-symbol";
 
@@ -44,7 +44,7 @@ export function buildOffenseSymbol(color: string, number?: number): THREE.Group 
   ring.name = "offense-ring";
   group.add(ring);
 
-  const sprite = numberSprite(number);
+  const sprite = numberSprite(label);
   if (sprite) group.add(sprite);
 
   return group;
