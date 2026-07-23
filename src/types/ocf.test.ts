@@ -1,24 +1,44 @@
 import { describe, it, expect } from "vitest";
-import type { OcfDocument } from "./ocf";
+import { entityRef, type OcfDocument } from "./ocf";
 
 describe("OcfDocument shape", () => {
-  it("accepts a minimal valid document literal", () => {
+  it("accepts a minimal valid v1 document literal", () => {
     const doc: OcfDocument = {
       version: "1.0",
+      meta: { id: "doc-1", title: "Minimal" },
       court: { ruleset: "fiba", type: "half_court" },
-      entities: [{ id: "o1", type: "offense", number: 4 }],
+      entities: [{ type: "offense", nr: 1, x: 0, y: 5 }],
+      balls: [{ id: "ball_1", carried_by: "offense_1" }],
       frames: [
         {
           id: "f1",
-          start_state: {
-            entities: [{ entity_ref: "o1", position: { x: 0, y: 0 } }],
-            ball: { status: "carried", carried_by: "o1" },
-          },
-          actions: [{ type: "move", entity_ref: "o1", moves: [{ to: { named: "basket" } }] }],
+          actions: [
+            { type: "move", player: "offense_1", moves: [{ to: { named: "basket" } }], intensity: "fast" },
+            { type: "pass", player: "offense_1", to_player: "offense_1", variant: "hand_off" },
+            { type: "screen", player: "offense_1", for_player: "offense_1" },
+            { type: "defend", player: "offense_1", guards_player: "offense_1", variant: "on_ball" },
+            { type: "rebound", player: "offense_1", variant: "defensive" },
+            { type: "pickup", player: "offense_1", ball_id: "ball_1" },
+          ],
+          end_state: { offense_1: { x: 1, y: 6 }, balls: { ball_1: { dead: true } } },
         },
       ],
     };
-    expect(doc.entities[0].id).toBe("o1");
-    expect(doc.frames[0].actions?.[0].type).toBe("move");
+    expect(doc.meta.title).toBe("Minimal");
+    expect(doc.frames[0].actions[0].type).toBe("move");
+  });
+});
+
+describe("entityRef", () => {
+  it("derives type_nr for offense/defense", () => {
+    expect(entityRef({ type: "offense", nr: 3, x: 0, y: 0 })).toBe("offense_3");
+    expect(entityRef({ type: "defense", nr: 1, x: 0, y: 0 })).toBe("defense_1");
+  });
+  it("derives bare 'coach' for the coach singleton", () => {
+    expect(entityRef({ type: "coach", x: 0, y: 0 })).toBe("coach");
+  });
+  it("derives type_nr for cone and station", () => {
+    expect(entityRef({ type: "cone", nr: 2, x: 0, y: 0 })).toBe("cone_2");
+    expect(entityRef({ type: "station", nr: 4, x: 0, y: 0 })).toBe("station_4");
   });
 });
