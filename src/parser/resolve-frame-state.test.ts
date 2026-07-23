@@ -2,41 +2,76 @@ import { describe, it, expect } from "vitest";
 import { resolveFrameState } from "./resolve-frame-state";
 import type { OcfDocument } from "../types/ocf";
 
-const baseDoc = (frames: OcfDocument["frames"]): OcfDocument => ({
+const baseDoc = (frames: OcfDocument["frames"], balls?: OcfDocument["balls"]): OcfDocument => ({
   version: "1.0",
+  meta: { id: "t", title: "test" },
   court: { ruleset: "fiba", type: "half_court" },
-  entities: [{ id: "o1", type: "offense", number: 4 }],
+  entities: [
+    { type: "offense", nr: 1, x: 0, y: 3 },
+    { type: "defense", nr: 1, x: 1, y: 4 },
+  ],
+  balls,
   frames,
 });
 
 describe("resolveFrameState", () => {
-  it("uses frame 0's own start_state when present", () => {
+  it("seeds start of frame 0 from entity initial positions when start_state is absent", () => {
+    const doc = baseDoc([{ id: "f1", actions: [], end_state: {} }]);
+    const state = resolveFrameState(doc, 0, "start");
+    expect(state.positions["offense_1"]).toEqual({ x: 0, y: 3 });
+    expect(state.positions["defense_1"]).toEqual({ x: 1, y: 4 });
+  });
+
+  it("frame start_state overrides only the entities it names", () => {
     const doc = baseDoc([
-      { id: "f1", start_state: { entities: [{ entity_ref: "o1", position: { x: 1, y: 2 } }] } },
+      { id: "f1", start_state: { offense_1: { x: 5, y: 5 } }, actions: [], end_state: {} },
     ]);
     const state = resolveFrameState(doc, 0, "start");
-    expect(state.entities[0].position).toEqual({ x: 1, y: 2 });
+    expect(state.positions["offense_1"]).toEqual({ x: 5, y: 5 });
+    expect(state.positions["defense_1"]).toEqual({ x: 1, y: 4 }); // untouched seed
   });
 
-  it("falls back to the previous frame's end_state when start_state is omitted", () => {
+  it("chains: frame 1 start inherits frame 0 end_state merges", () => {
     const doc = baseDoc([
-      { id: "f1", end_state: { entities: [{ entity_ref: "o1", position: { x: 3, y: 4 } }] } },
-      { id: "f2", end_state: { entities: [{ entity_ref: "o1", position: { x: 5, y: 6 } }] } },
+      { id: "f1", actions: [], end_state: { offense_1: { x: 7, y: 7 } } },
+      { id: "f2", actions: [], end_state: {} },
     ]);
     const state = resolveFrameState(doc, 1, "start");
-    expect(state.entities[0].position).toEqual({ x: 3, y: 4 });
+    expect(state.positions["offense_1"]).toEqual({ x: 7, y: 7 });
+    expect(state.positions["defense_1"]).toEqual({ x: 1, y: 4 });
   });
 
-  it("throws a descriptive error when frame 0 has no start_state and none can be inherited", () => {
-    const doc = baseDoc([{ id: "f1", actions: [] }]);
-    expect(() => resolveFrameState(doc, 0, "start")).toThrow(/start_state/);
-  });
-
-  it("resolves end_state, defaulting to start_state if end_state is omitted (static frame)", () => {
+  it("end resolves start merged with the frame's own end_state", () => {
     const doc = baseDoc([
-      { id: "f1", start_state: { entities: [{ entity_ref: "o1", position: { x: 1, y: 1 } }] } },
+      { id: "f1", start_state: { offense_1: { x: 5, y: 5 } }, actions: [], end_state: { offense_1: { x: 9, y: 9 } } },
     ]);
-    const state = resolveFrameState(doc, 0, "end");
-    expect(state.entities[0].position).toEqual({ x: 1, y: 1 });
+    expect(resolveFrameState(doc, 0, "end").positions["offense_1"]).toEqual({ x: 9, y: 9 });
+    expect(resolveFrameState(doc, 0, "start").positions["offense_1"]).toEqual({ x: 5, y: 5 });
+  });
+
+  it("seeds balls from doc.balls and merges frame-state ball overrides", () => {
+    const doc = baseDoc(
+      [
+        { id: "f1", actions: [], end_state: { balls: { ball_1: { at: { x: 2, y: 2 } } } } },
+        { id: "f2", actions: [], end_state: { balls: { ball_2: { dead: true } } } },
+      ],
+      [
+        { id: "ball_1", carried_by: "offense_1" },
+        { id: "ball_2", at: { x: 0, y: 0 } },
+      ],
+    );
+    expect(resolveFrameState(doc, 0, "start").balls).toEqual({
+      ball_1: { carried_by: "offense_1" },
+      ball_2: { at: { x: 0, y: 0 } },
+    });
+    expect(resolveFrameState(doc, 1, "end").balls).toEqual({
+      ball_1: { at: { x: 2, y: 2 } },
+      ball_2: { dead: true },
+    });
+  });
+
+  it("throws for an out-of-range frame index", () => {
+    const doc = baseDoc([{ id: "f1", actions: [], end_state: {} }]);
+    expect(() => resolveFrameState(doc, 5, "start")).toThrow(/out of range/);
   });
 });
