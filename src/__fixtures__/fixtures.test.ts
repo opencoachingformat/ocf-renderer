@@ -35,20 +35,18 @@ describe("fixtures", () => {
 });
 
 describe("source-four-frame-ball-screen", () => {
-  const doc = sourceFourFrameBallScreen as unknown as OcfDocument;
+  const doc = fixtures["source-four-frame-ball-screen"];
 
-  it("includes the source-faithful four-frame play", () => {
+  it("has exactly four frames and five offense entities", () => {
     expect(doc.frames).toHaveLength(4);
     expect(doc.entities.filter((entity) => entity.type === "offense")).toHaveLength(5);
   });
 
-  for (let frame = 0; frame < 4; frame += 1) {
-    it(`frame ${frame} composes with entities and actions groups`, () => {
-      const scene = composeFrame(doc, frame);
-      const entityGroup = scene.getObjectByName("entities");
-      const actionGroup = scene.getObjectByName("actions");
-      expect(entityGroup).toBeDefined();
-      expect(actionGroup).toBeDefined();
-    });
-  }
+  it("composes all four frames with entities and actions groups", () => {
+    for (let frameIndex = 0; frameIndex < 4; frameIndex++) {
+      const scene = composeFrame(doc, frameIndex);
+      expect(scene.getObjectByName("entities")).toBeDefined();
+      expect(scene.getObjectByName("actions")).toBeDefined();
+    }
+  });
 });

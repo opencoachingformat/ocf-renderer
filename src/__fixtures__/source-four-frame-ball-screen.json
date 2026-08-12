@@ -64,7 +64,7 @@
     {
       "id": "frame_4",
       "label": "Around-Player Dribble & Roll",
-      "description": "SF (3) dribbles around PF (4) into the paint. PF (4) rolls to left block.",
+      "description": "SF (3) dribbles into the paint, routing around PF (4)'s frame-start position before PF (4) rolls to left block.",
       "actions": [
         { "player": "offense_3", "type": "dribble", "moves": [ { "to": { "x": -1.0, "y": 11.5 }, "around_player": "offense_4" } ] },
         { "player": "offense_4", "type": "cut", "moves": [ { "to": { "named": "left_block" } } ] }
