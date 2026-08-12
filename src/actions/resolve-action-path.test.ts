@@ -83,4 +83,47 @@ describe("resolveActionPath", () => {
     const action: Action = { type: "move", player: "ghost", moves: [{ to: { x: 1, y: 1 } }] };
     expect(() => resolveActionPath(action, startState, transformer)).toThrow(/ghost/);
   });
+
+  describe("around_player route expansion", () => {
+    const aroundState: ResolvedFrameState = {
+      positions: {
+        offense_1: { x: 0, y: 5 },
+        defense_1: { x: 0, y: 8 },
+      },
+      balls: {},
+    };
+
+    it("inserts an obstacle-clearing waypoint for around_player", () => {
+      const action: Action = {
+        type: "cut",
+        player: "offense_1",
+        moves: [{ to: { x: 0, y: 11 }, around_player: "defense_1" }],
+      };
+      const path = resolveActionPath(action, aroundState, transformer)!;
+      expect(path.length).toBe(3);
+      expect(path[0].equals(transformer.resolveToWorld({ x: 0, y: 5 }))).toBe(true);
+      expect(path[2].equals(transformer.resolveToWorld({ x: 0, y: 11 }))).toBe(true);
+      expect(path[1].x).not.toBeCloseTo(0, 5);
+    });
+
+    it("routes around the obstacle on a deterministic side for collinear points", () => {
+      const action: Action = {
+        type: "move",
+        player: "offense_1",
+        moves: [{ to: { x: 0, y: 11 }, around_player: "defense_1" }],
+      };
+      const first = resolveActionPath(action, aroundState, transformer)!;
+      const second = resolveActionPath(action, aroundState, transformer)!;
+      expect(first[1].equals(second[1])).toBe(true);
+    });
+
+    it("throws when around_player cannot be resolved", () => {
+      const action: Action = {
+        type: "cut",
+        player: "offense_1",
+        moves: [{ to: { x: 0, y: 11 }, around_player: "missing" }],
+      };
+      expect(() => resolveActionPath(action, aroundState, transformer)).toThrow(/missing/);
+    });
+  });
 });

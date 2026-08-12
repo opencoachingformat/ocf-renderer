@@ -1,0 +1,94 @@
+{
+  "$schema": "https://opencoachingformat.org/schema/v1.json",
+  "meta": {
+    "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "title": "Continuous Ball Screen Set",
+    "description": "Multi-frame offensive set with consecutive ball screens, roll actions, and kick-out options. Designed as a continuous play that can be repeated.",
+    "author": "OCF Examples",
+    "tags": ["offense", "half-court", "ball-screen", "continuous", "pick-and-roll"],
+    "difficulty": "intermediate"
+  },
+  "court": { "ruleset": "fiba", "type": "half_court" },
+  "entities": [
+    { "type": "offense", "nr": 1, "x": 0.0, "y": 7.0 },
+    { "type": "offense", "nr": 2, "x": 6.75, "y": 8.2 },
+    { "type": "offense", "nr": 3, "x": -6.75, "y": 8.2 },
+    { "type": "offense", "nr": 4, "x": -2.45, "y": 11.0 },
+    { "type": "offense", "nr": 5, "x": 2.45, "y": 11.0 }
+  ],
+  "balls": [ { "id": "ball_1", "carried_by": "offense_1" } ],
+  "frames": [
+    {
+      "id": "frame_1",
+      "label": "Pass to Right Wing & Cut",
+      "description": "PG (1) passes to SG (2) on right wing, then cuts through to strong corner.",
+      "actions": [
+        { "player": "offense_1", "type": "pass", "to_player": "offense_2", "variant": "chest" },
+        { "player": "offense_1", "type": "cut", "moves": [ { "to": { "named": "right_corner" } } ] }
+      ],
+      "end_state": {
+        "offense_1": { "named": "right_corner" },
+        "balls": { "ball_1": { "carried_by": "offense_2" } }
+      }
+    },
+    {
+      "id": "frame_2",
+      "label": "Center Ball Screen & Roll",
+      "description": "C (5) sets inside ball screen for SG (2). SG penetrates into paint, C rolls to baseline. PG lifts from corner to wing.",
+      "actions": [
+        { "player": "offense_5", "type": "screen", "for_player": "offense_2", "variant": "ball_screen", "at": { "x": 4.5, "y": 9.5 }, "physicality": "aggressive" },
+        { "player": "offense_2", "type": "dribble", "moves": [ { "to": { "x": 3.5, "y": 11.5 } } ] },
+        { "player": "offense_5", "type": "cut", "moves": [ { "to": { "named": "right_block" } } ] },
+        { "player": "offense_1", "type": "move", "moves": [ { "to": { "named": "right_wing" } } ] }
+      ],
+      "end_state": {
+        "offense_1": { "named": "right_wing" },
+        "offense_2": { "x": 3.5, "y": 11.5 },
+        "offense_5": { "named": "right_block" },
+        "balls": { "ball_1": { "carried_by": "offense_2" } }
+      }
+    },
+    {
+      "id": "frame_3",
+      "label": "Kick to Left Wing & Cut Through",
+      "description": "If no shot, SG (2) passes to SF (3) spotting up on left wing, then cuts through to left corner.",
+      "actions": [
+        { "player": "offense_2", "type": "pass", "to_player": "offense_3", "variant": "chest" },
+        { "player": "offense_2", "type": "cut", "moves": [ { "to": { "named": "left_corner" } } ] }
+      ],
+      "end_state": {
+        "offense_2": { "named": "left_corner" },
+        "balls": { "ball_1": { "carried_by": "offense_3" } }
+      }
+    },
+    {
+      "id": "frame_4",
+      "label": "Second Ball Screen (PF)",
+      "description": "PF (4) sets inside ball screen for SF (3). SF penetrates with options: score, dump off to big, or kick out.",
+      "actions": [
+        { "player": "offense_4", "type": "screen", "for_player": "offense_3", "variant": "ball_screen", "at": { "x": -4.5, "y": 9.5 }, "physicality": "aggressive" },
+        { "player": "offense_3", "type": "dribble", "moves": [ { "to": { "x": -3.5, "y": 11.5 } } ] },
+        { "player": "offense_4", "type": "cut", "moves": [ { "to": { "named": "left_block" } } ] }
+      ],
+      "end_state": {
+        "offense_3": { "x": -3.5, "y": 11.5 },
+        "offense_4": { "named": "left_block" },
+        "balls": { "ball_1": { "carried_by": "offense_3" } }
+      }
+    },
+    {
+      "id": "frame_5",
+      "label": "Reset & Continuous Option",
+      "description": "If no good shot, SF (3) kicks out to PG (1) on wing. PG then runs pick-and-roll with C (5) to reset the continuous set.",
+      "actions": [
+        { "player": "offense_3", "type": "pass", "to_player": "offense_1", "variant": "chest" },
+        { "player": "offense_5", "type": "move", "moves": [ { "to": { "x": 0.0, "y": 9.0 } } ] },
+        { "player": "offense_5", "type": "screen", "for_player": "offense_1", "variant": "ball_screen", "at": { "x": 0.5, "y": 9.5 }, "physicality": "aggressive" }
+      ],
+      "end_state": {
+        "offense_5": { "x": 0.5, "y": 9.5 },
+        "balls": { "ball_1": { "carried_by": "offense_1" } }
+      }
+    }
+  ]
+}

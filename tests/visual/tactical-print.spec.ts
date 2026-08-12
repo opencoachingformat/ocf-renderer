@@ -33,3 +33,16 @@ for (let frameIndex = 0; frameIndex < pickAndRollFrameCount; frameIndex++) {
     });
   });
 }
+
+// Source-faithful four-frame ball-screen set: covers right-side action,
+// dribble penetration, left-side reversal, and around_player dribble routing.
+const sourceFourFrameCount = 4;
+for (let frameIndex = 0; frameIndex < sourceFourFrameCount; frameIndex++) {
+  test(`tactical print: source-four-frame-ball-screen frame ${frameIndex + 1}`, async ({ page }) => {
+    await page.goto(`render-fixture.html?fixture=source-four-frame-ball-screen&frame=${frameIndex}`);
+    await page.waitForSelector("canvas[data-rendered='true']");
+    await expect(page.locator("canvas")).toHaveScreenshot(`source-four-frame-ball-screen-${frameIndex + 1}.png`, {
+      maxDiffPixelRatio: 0.01,
+    });
+  });
+}
