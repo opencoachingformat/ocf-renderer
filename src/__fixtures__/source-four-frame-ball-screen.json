@@ -1,0 +1,79 @@
+{
+  "$schema": "https://opencoachingformat.org/schema/v1.json",
+  "meta": {
+    "id": "c8d5e2f1-3a4b-4c6d-8e7f-9a0b1c2d3e4f",
+    "title": "Source-Faithful Four-Frame Ball Screen",
+    "description": "Four-frame ball-screen set with right-side then left-side action, featuring around_player dribble routing in frame 4."
+  },
+  "court": { "ruleset": "fiba", "type": "half_court" },
+  "entities": [
+    { "type": "offense", "nr": 1, "x": 0.0, "y": 7.0 },
+    { "type": "offense", "nr": 2, "x": 6.0, "y": 8.0 },
+    { "type": "offense", "nr": 3, "x": -6.0, "y": 8.0 },
+    { "type": "offense", "nr": 4, "x": -2.5, "y": 10.0 },
+    { "type": "offense", "nr": 5, "x": 2.5, "y": 10.0 }
+  ],
+  "balls": [ { "id": "ball_1", "carried_by": "offense_1" } ],
+  "frames": [
+    {
+      "id": "frame_1",
+      "label": "Pass to Right Wing, Cut & Screen",
+      "description": "PG (1) passes to SG (2) on right wing, cuts to right corner. C (5) sets ball screen for SG (2).",
+      "actions": [
+        { "player": "offense_1", "type": "pass", "to_player": "offense_2", "variant": "chest" },
+        { "player": "offense_1", "type": "cut", "moves": [ { "to": { "named": "right_corner" } } ] },
+        { "player": "offense_5", "type": "screen", "for_player": "offense_2", "variant": "ball_screen", "at": { "x": 4.0, "y": 9.5 } }
+      ],
+      "end_state": {
+        "offense_1": { "named": "right_corner" },
+        "offense_5": { "x": 4.0, "y": 9.5 },
+        "balls": { "ball_1": { "carried_by": "offense_2" } }
+      }
+    },
+    {
+      "id": "frame_2",
+      "label": "Dribble Penetration & Roll",
+      "description": "SG (2) dribbles into the paint. C (5) rolls to right block. PG (1) lifts from corner to right wing.",
+      "actions": [
+        { "player": "offense_2", "type": "dribble", "moves": [ { "to": { "x": 3.0, "y": 11.0 } } ] },
+        { "player": "offense_5", "type": "cut", "moves": [ { "to": { "named": "right_block" } } ] },
+        { "player": "offense_1", "type": "move", "moves": [ { "to": { "named": "right_wing" } } ] }
+      ],
+      "end_state": {
+        "offense_1": { "named": "right_wing" },
+        "offense_2": { "x": 3.0, "y": 11.0 },
+        "offense_5": { "named": "right_block" },
+        "balls": { "ball_1": { "carried_by": "offense_2" } }
+      }
+    },
+    {
+      "id": "frame_3",
+      "label": "Pass to Left Wing, Cut & Screen",
+      "description": "SG (2) passes to SF (3) on left wing, cuts to left corner. PF (4) sets ball screen for SF (3).",
+      "actions": [
+        { "player": "offense_2", "type": "pass", "to_player": "offense_3", "variant": "chest" },
+        { "player": "offense_2", "type": "cut", "moves": [ { "to": { "named": "left_corner" } } ] },
+        { "player": "offense_4", "type": "screen", "for_player": "offense_3", "variant": "ball_screen", "at": { "x": -4.0, "y": 9.5 } }
+      ],
+      "end_state": {
+        "offense_2": { "named": "left_corner" },
+        "offense_4": { "x": -4.0, "y": 9.5 },
+        "balls": { "ball_1": { "carried_by": "offense_3" } }
+      }
+    },
+    {
+      "id": "frame_4",
+      "label": "Around-Player Dribble & Roll",
+      "description": "SF (3) dribbles around PF (4) into the paint. PF (4) rolls to left block.",
+      "actions": [
+        { "player": "offense_3", "type": "dribble", "moves": [ { "to": { "x": -1.0, "y": 11.5 }, "around_player": "offense_4" } ] },
+        { "player": "offense_4", "type": "cut", "moves": [ { "to": { "named": "left_block" } } ] }
+      ],
+      "end_state": {
+        "offense_3": { "x": -1.0, "y": 11.5 },
+        "offense_4": { "named": "left_block" },
+        "balls": { "ball_1": { "carried_by": "offense_3" } }
+      }
+    }
+  ]
+}

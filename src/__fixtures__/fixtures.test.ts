@@ -10,6 +10,7 @@ import shoot from "./shoot.json";
 import fullCourtTwoPlayers from "./full-court-two-players.json";
 import customCourt from "./custom-court.json";
 import pickAndRoll from "./pick-and-roll.json";
+import sourceFourFrameBallScreen from "./source-four-frame-ball-screen.json";
 
 const fixtures: Record<string, OcfDocument> = {
   "simple-cut": simpleCut as OcfDocument,
@@ -19,6 +20,7 @@ const fixtures: Record<string, OcfDocument> = {
   "full-court-two-players": fullCourtTwoPlayers as OcfDocument,
   "custom-court": customCourt as OcfDocument,
   "pick-and-roll": pickAndRoll as OcfDocument,
+  "source-four-frame-ball-screen": sourceFourFrameBallScreen as unknown as OcfDocument,
 };
 
 describe("fixtures", () => {
@@ -29,5 +31,24 @@ describe("fixtures", () => {
         expect(() => composeFrame(doc, frameIndex)).not.toThrow();
       });
     }
+  }
+});
+
+describe("source-four-frame-ball-screen", () => {
+  const doc = sourceFourFrameBallScreen as unknown as OcfDocument;
+
+  it("includes the source-faithful four-frame play", () => {
+    expect(doc.frames).toHaveLength(4);
+    expect(doc.entities.filter((entity) => entity.type === "offense")).toHaveLength(5);
+  });
+
+  for (let frame = 0; frame < 4; frame += 1) {
+    it(`frame ${frame} composes with entities and actions groups`, () => {
+      const scene = composeFrame(doc, frame);
+      const entityGroup = scene.getObjectByName("entities");
+      const actionGroup = scene.getObjectByName("actions");
+      expect(entityGroup).toBeDefined();
+      expect(actionGroup).toBeDefined();
+    });
   }
 });
