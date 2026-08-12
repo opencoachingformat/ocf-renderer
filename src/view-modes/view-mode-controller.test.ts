@@ -4,11 +4,10 @@ import { ViewModeController } from "./view-mode-controller";
 
 const doc: OcfDocument = {
   version: "1.0",
+  meta: { id: "t", title: "test" },
   court: { ruleset: "fiba", type: "half_court" },
-  entities: [{ id: "o1", type: "offense", number: 1 }],
-  frames: [
-    { id: "f1", start_state: { entities: [{ entity_ref: "o1", position: { x: 0, y: 0 } }] } },
-  ],
+  entities: [{ type: "offense", nr: 1, x: 0, y: 0 }],
+  frames: [{ id: "f1", actions: [], end_state: {} }],
 };
 
 describe("ViewModeController", () => {

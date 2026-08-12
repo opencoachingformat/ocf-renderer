@@ -1,23 +1,19 @@
 {
   "version": "1.0",
+  "meta": { "id": "full-court-two-players", "title": "Full Court, Two Players" },
   "court": { "ruleset": "fiba", "type": "full_court" },
   "entities": [
-    { "id": "o1", "type": "offense", "number": 10 },
-    { "id": "o2", "type": "offense", "number": 11 }
+    { "type": "offense", "nr": 1, "label": "10", "x": 0, "y": -10 },
+    { "type": "offense", "nr": 2, "label": "11", "x": 2, "y": 8 }
   ],
+  "balls": [{ "id": "ball_1", "carried_by": "offense_1" }],
   "frames": [
     {
       "id": "f1",
-      "start_state": {
-        "entities": [
-          { "entity_ref": "o1", "position": { "x": 0, "y": -10 } },
-          { "entity_ref": "o2", "position": { "x": 2, "y": 8 } }
-        ],
-        "ball": { "status": "carried", "carried_by": "o1" }
-      },
       "actions": [
-        { "type": "move", "entity_ref": "o1", "moves": [{ "to": { "x": 0, "y": 10 } }] }
-      ]
+        { "type": "move", "player": "offense_1", "moves": [{ "to": { "x": 0, "y": 10 } }] }
+      ],
+      "end_state": { "offense_1": { "x": 0, "y": 10 } }
     }
   ]
 }

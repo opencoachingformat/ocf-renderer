@@ -36,6 +36,8 @@ export class OCFRenderer {
     if (result.status !== "ok" || !result.camera) {
       throw new Error(`OCFRenderer.renderToCanvas: mode "${this.controller.getMode()}" is not implemented yet`);
     }
+    // TODO(post-v1): Cache WebGLRenderer as private field to avoid GPU resource leak
+    // on repeated renderToCanvas calls. Currently creates a new renderer per call.
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
     renderer.setSize(clientWidth, clientHeight, false);
     renderer.render(result.scene, result.camera);

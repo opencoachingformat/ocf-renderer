@@ -1,28 +1,25 @@
 {
   "version": "1.0",
+  "meta": { "id": "pass-and-screen", "title": "Pass and Screen" },
   "court": { "ruleset": "fiba", "type": "half_court" },
   "entities": [
-    { "id": "o1", "type": "offense", "number": 1 },
-    { "id": "o2", "type": "offense", "number": 2 },
-    { "id": "o3", "type": "offense", "number": 3 },
-    { "id": "d1", "type": "defense" }
+    { "type": "offense", "nr": 1, "x": -3, "y": 4 },
+    { "type": "offense", "nr": 2, "x": 3, "y": 4 },
+    { "type": "offense", "nr": 3, "x": 1, "y": 3 },
+    { "type": "defense", "nr": 1, "x": 0, "y": 5, "rotation": 90 }
   ],
+  "balls": [{ "id": "ball_1", "carried_by": "offense_1" }],
   "frames": [
     {
       "id": "f1",
-      "start_state": {
-        "entities": [
-          { "entity_ref": "o1", "position": { "x": -3, "y": 4 } },
-          { "entity_ref": "o2", "position": { "x": 3, "y": 4 } },
-          { "entity_ref": "o3", "position": { "x": 1, "y": 3 } },
-          { "entity_ref": "d1", "position": { "x": 0, "y": 5 }, "rotation": 90 }
-        ],
-        "ball": { "status": "carried", "carried_by": "o1" }
-      },
       "actions": [
-        { "type": "pass", "entity_ref": "o1", "to_entity_ref": "o2" },
-        { "type": "screen", "entity_ref": "o3", "at": { "x": 1.5, "y": 5.5 } }
-      ]
+        { "type": "pass", "player": "offense_1", "to_player": "offense_2" },
+        { "type": "screen", "player": "offense_3", "for_player": "offense_2", "at": { "x": 1.5, "y": 5.5 } }
+      ],
+      "end_state": {
+        "offense_3": { "x": 1.5, "y": 5.5 },
+        "balls": { "ball_1": { "carried_by": "offense_2" } }
+      }
     }
   ]
 }

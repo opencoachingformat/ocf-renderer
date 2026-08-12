@@ -154,7 +154,7 @@ exports[`composeFrame scene-graph snapshots > matches snapshot for fixture: cust
               "type": "Mesh",
             },
           ],
-          "name": "ball-symbol",
+          "name": "ball_1",
           "position": [
             -0.25,
             0,
@@ -164,7 +164,7 @@ exports[`composeFrame scene-graph snapshots > matches snapshot for fixture: cust
           "type": "Group",
         },
       ],
-      "name": "ball",
+      "name": "balls",
       "position": [
         0,
         0,
@@ -450,7 +450,7 @@ exports[`composeFrame scene-graph snapshots > matches snapshot for fixture: full
               "type": "Mesh",
             },
           ],
-          "name": "ball-symbol",
+          "name": "ball_1",
           "position": [
             -0.25,
             0,
@@ -460,7 +460,7 @@ exports[`composeFrame scene-graph snapshots > matches snapshot for fixture: full
           "type": "Group",
         },
       ],
-      "name": "ball",
+      "name": "balls",
       "position": [
         0,
         0,
@@ -793,7 +793,7 @@ exports[`composeFrame scene-graph snapshots > matches snapshot for fixture: pass
               "type": "Mesh",
             },
           ],
-          "name": "ball-symbol",
+          "name": "ball_1",
           "position": [
             -3.25,
             0,
@@ -803,7 +803,7 @@ exports[`composeFrame scene-graph snapshots > matches snapshot for fixture: pass
           "type": "Group",
         },
       ],
-      "name": "ball",
+      "name": "balls",
       "position": [
         0,
         0,
@@ -1080,7 +1080,7 @@ exports[`composeFrame scene-graph snapshots > matches snapshot for fixture: shoo
               "type": "Mesh",
             },
           ],
-          "name": "ball-symbol",
+          "name": "ball_1",
           "position": [
             -0.25,
             0,
@@ -1090,7 +1090,7 @@ exports[`composeFrame scene-graph snapshots > matches snapshot for fixture: shoo
           "type": "Group",
         },
       ],
-      "name": "ball",
+      "name": "balls",
       "position": [
         0,
         0,
@@ -1345,7 +1345,7 @@ exports[`composeFrame scene-graph snapshots > matches snapshot for fixture: simp
               "type": "Mesh",
             },
           ],
-          "name": "ball-symbol",
+          "name": "ball_1",
           "position": [
             0.75,
             0,
@@ -1355,7 +1355,7 @@ exports[`composeFrame scene-graph snapshots > matches snapshot for fixture: simp
           "type": "Group",
         },
       ],
-      "name": "ball",
+      "name": "balls",
       "position": [
         0,
         0,
@@ -1564,7 +1564,7 @@ exports[`composeFrame scene-graph snapshots > matches snapshot for fixture: simp
               "type": "Mesh",
             },
           ],
-          "name": "ball-symbol",
+          "name": "ball_1",
           "position": [
             -0.25,
             0,
@@ -1574,7 +1574,7 @@ exports[`composeFrame scene-graph snapshots > matches snapshot for fixture: simp
           "type": "Group",
         },
       ],
-      "name": "ball",
+      "name": "balls",
       "position": [
         0,
         0,

@@ -15,7 +15,8 @@ export function entityWorldPos(
   return transformer.resolveToWorld(coord);
 }
 
-/** Returns null for actions with no drawn path (shoot/defend/rebound/pickup, or moves without `to`). */
+/** Returns null for actions with no drawn path (shoot/defend/rebound/pickup, or moves without `to`).
+ *  Note: `hand_off` was removed from the v1 schema; if reintroduced, treat as `pass` variant. */
 export function resolveActionPath(
   action: Action,
   startState: ResolvedFrameState,

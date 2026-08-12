@@ -1,5 +1,6 @@
 {
   "version": "1.0",
+  "meta": { "id": "custom-court", "title": "Custom Court" },
   "court": {
     "ruleset": "custom",
     "type": "half_court",
@@ -13,18 +14,7 @@
       "free_throw_distance": 5.8
     }
   },
-  "entities": [
-    { "id": "o1", "type": "offense", "number": 5 }
-  ],
-  "frames": [
-    {
-      "id": "f1",
-      "start_state": {
-        "entities": [
-          { "entity_ref": "o1", "position": { "x": 0, "y": 4 } }
-        ],
-        "ball": { "status": "carried", "carried_by": "o1" }
-      }
-    }
-  ]
+  "entities": [{ "type": "offense", "nr": 5, "x": 0, "y": 4 }],
+  "balls": [{ "id": "ball_1", "carried_by": "offense_5" }],
+  "frames": [{ "id": "f1", "actions": [], "end_state": {} }]
 }

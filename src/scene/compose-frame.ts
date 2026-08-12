@@ -86,6 +86,7 @@ export function composeFrame(
       const carrierWorldPos = carrierCoord ? transformer.resolveToWorld(carrierCoord) : new THREE.Vector3();
       // v1 simplification: always offset "forward" toward -Z (frontcourt); schema
       // entities carry no handedness data, so the offset is always right-handed.
+      // TODO(post-v1): Wire handedness through when schema adds left_handed/right_handed tags.
       const forward = new THREE.Vector3(0, 0, -1);
       ball.position.copy(carriedBallOffset(carrierWorldPos, forward, false));
     } else {
