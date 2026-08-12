@@ -7,6 +7,8 @@
   "types": "./dist/index.d.ts",
   "scripts": {
     "build": "tsup src/index.ts --format esm,cjs --dts",
+    "build:browser": "tsup --config tsup.browser.config.ts",
+    "test:browser": "node scripts/verify-browser-bundle.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:visual": "playwright test"
