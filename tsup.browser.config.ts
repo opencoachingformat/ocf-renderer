@@ -6,4 +6,5 @@ export default defineConfig({
   target: "es2020",
   outDir: "dist/browser",
   noExternal: ["three"],
+  sourcemap: true,
 });
