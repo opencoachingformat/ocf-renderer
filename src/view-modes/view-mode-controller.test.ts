@@ -1,0 +1,30 @@
+import { describe, it, expect } from "vitest";
+import type { OcfDocument } from "../types/ocf";
+import { ViewModeController } from "./view-mode-controller";
+
+const doc: OcfDocument = {
+  version: "1.0",
+  meta: { id: "t", title: "test" },
+  court: { ruleset: "fiba", type: "half_court" },
+  entities: [{ type: "offense", nr: 1, x: 0, y: 0 }],
+  frames: [{ id: "f1", actions: [], end_state: {} }],
+};
+
+describe("ViewModeController", () => {
+  it("defaults to tactical_print mode and renders a populated scene", () => {
+    const controller = new ViewModeController();
+    expect(controller.getMode()).toBe("tactical_print");
+    const result = controller.renderFrame(doc, 0);
+    expect(result.status).toBe("ok");
+    if (result.status === "ok") {
+      expect(result.scene.getObjectByName("entities")).toBeDefined();
+    }
+  });
+
+  it("returns not_implemented (without throwing) for coaching_animation", () => {
+    const controller = new ViewModeController();
+    controller.setMode("coaching_animation");
+    const result = controller.renderFrame(doc, 0);
+    expect(result).toEqual({ status: "not_implemented", mode: "coaching_animation" });
+  });
+});

@@ -1,0 +1,25 @@
+{
+  "version": "1.0",
+  "meta": { "id": "pass-and-screen", "title": "Pass and Screen" },
+  "court": { "ruleset": "fiba", "type": "half_court" },
+  "entities": [
+    { "type": "offense", "nr": 1, "x": -3, "y": 4 },
+    { "type": "offense", "nr": 2, "x": 3, "y": 4 },
+    { "type": "offense", "nr": 3, "x": 1, "y": 3 },
+    { "type": "defense", "nr": 1, "x": 0, "y": 5, "rotation": 90 }
+  ],
+  "balls": [{ "id": "ball_1", "carried_by": "offense_1" }],
+  "frames": [
+    {
+      "id": "f1",
+      "actions": [
+        { "type": "pass", "player": "offense_1", "to_player": "offense_2" },
+        { "type": "screen", "player": "offense_3", "for_player": "offense_2", "at": { "x": 1.5, "y": 5.5 } }
+      ],
+      "end_state": {
+        "offense_3": { "x": 1.5, "y": 5.5 },
+        "balls": { "ball_1": { "carried_by": "offense_2" } }
+      }
+    }
+  ]
+}

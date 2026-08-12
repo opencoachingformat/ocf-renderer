@@ -1,0 +1,19 @@
+{
+  "version": "1.0",
+  "meta": { "id": "simple-cut", "title": "Simple Cut" },
+  "court": { "ruleset": "fiba", "type": "half_court" },
+  "entities": [
+    { "type": "offense", "nr": 4, "x": 1, "y": 4 },
+    { "type": "defense", "nr": 1, "x": 1.5, "y": 5, "rotation": 180 }
+  ],
+  "balls": [{ "id": "ball_1", "carried_by": "offense_4" }],
+  "frames": [
+    {
+      "id": "f1",
+      "actions": [
+        { "type": "cut", "player": "offense_4", "moves": [{ "to": { "x": -2, "y": 6 } }] }
+      ],
+      "end_state": { "offense_4": { "x": -2, "y": 6 } }
+    }
+  ]
+}

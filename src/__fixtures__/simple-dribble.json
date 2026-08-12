@@ -1,0 +1,16 @@
+{
+  "version": "1.0",
+  "meta": { "id": "simple-dribble", "title": "Simple Dribble" },
+  "court": { "ruleset": "fiba", "type": "half_court" },
+  "entities": [{ "type": "offense", "nr": 1, "x": 0, "y": 3 }],
+  "balls": [{ "id": "ball_1", "carried_by": "offense_1" }],
+  "frames": [
+    {
+      "id": "f1",
+      "actions": [
+        { "type": "dribble", "player": "offense_1", "moves": [{ "to": { "x": 3, "y": 6 } }] }
+      ],
+      "end_state": { "offense_1": { "x": 3, "y": 6 } }
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "version": "1.0",
+  "meta": { "id": "shoot", "title": "Shoot" },
+  "court": { "ruleset": "fiba", "type": "half_court" },
+  "entities": [
+    { "type": "offense", "nr": 1, "label": "23", "x": 0, "y": 9 },
+    { "type": "defense", "nr": 1, "x": 0.5, "y": 9.5, "rotation": 0 }
+  ],
+  "balls": [{ "id": "ball_1", "carried_by": "offense_1" }],
+  "frames": [
+    {
+      "id": "f1",
+      "actions": [{ "type": "shoot", "player": "offense_1", "variant": "jumper" }],
+      "end_state": {}
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "version": "1.0",
+  "meta": { "id": "pick-and-roll", "title": "Pick and Roll" },
+  "court": { "ruleset": "fiba", "type": "half_court" },
+  "entities": [
+    { "type": "offense", "nr": 1, "x": -4, "y": 7 },
+    { "type": "offense", "nr": 5, "x": -1, "y": 8.5 },
+    { "type": "defense", "nr": 1, "x": -4, "y": 7.8, "rotation": 0 },
+    { "type": "defense", "nr": 2, "x": -1, "y": 9.3, "rotation": 0 }
+  ],
+  "balls": [{ "id": "ball_1", "carried_by": "offense_1" }],
+  "frames": [
+    {
+      "id": "f1",
+      "actions": [
+        { "type": "screen", "player": "offense_5", "for_player": "offense_1", "at": { "x": -2, "y": 7.5 }, "variant": "ball_screen" },
+        { "type": "dribble", "player": "offense_1", "moves": [{ "to": { "x": -1, "y": 8 } }, { "to": { "x": 0, "y": 8 } }] }
+      ],
+      "end_state": {
+        "offense_1": { "x": 0, "y": 8 },
+        "offense_5": { "x": -2, "y": 7.5 },
+        "defense_1": { "x": -1.5, "y": 6.8 },
+        "defense_2": { "x": -1.8, "y": 8.3 }
+      }
+    },
+    {
+      "id": "f2",
+      "actions": [
+        { "type": "cut", "player": "offense_5", "moves": [{ "to": { "x": 0.5, "y": 10 } }, { "to": { "x": 0.8, "y": 11.3 } }] },
+        { "type": "dribble", "player": "offense_1", "moves": [{ "to": { "x": 1, "y": 8.3 } }] }
+      ],
+      "end_state": {
+        "offense_1": { "x": 1, "y": 8.3 },
+        "offense_5": { "x": 0.8, "y": 11.3 },
+        "defense_1": { "x": 0.7, "y": 7.6 },
+        "defense_2": { "x": 1.2, "y": 10.8 }
+      }
+    },
+    {
+      "id": "f3",
+      "actions": [
+        { "type": "pass", "player": "offense_1", "to_player": "offense_5" },
+        { "type": "shoot", "player": "offense_5" }
+      ],
+      "end_state": { "balls": { "ball_1": { "carried_by": "offense_5" } } }
+    }
+  ]
+}
