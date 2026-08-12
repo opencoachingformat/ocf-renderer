@@ -34,13 +34,15 @@
         if (!fixture) {
           throw new Error("render-fixture.html: missing required ?fixture= query param");
         }
-        const frameIndex = Number(params.get("frame") ?? "0");
+        const requestedFrameIndex = Number(params.get("frame") ?? "0");
 
         const response = await fetch(`../src/__fixtures__/${fixture}.json`);
         if (!response.ok) {
           throw new Error(`render-fixture.html: failed to fetch fixture "${fixture}" (${response.status})`);
         }
         const doc = await response.json();
+        const rawFrameIndex = Number.isFinite(requestedFrameIndex) ? requestedFrameIndex : 0;
+        const frameIndex = Math.max(0, Math.min(rawFrameIndex, doc.frames.length - 1));
 
         const canvas = document.getElementById("stage");
         const renderer = new OCFRenderer(doc);
