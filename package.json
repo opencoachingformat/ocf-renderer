@@ -5,8 +5,18 @@
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./browser": "./dist/browser/index.js"
+  },
   "scripts": {
     "build": "tsup src/index.ts --format esm,cjs --dts",
+    "build:browser": "tsup --config tsup.browser.config.ts",
+    "test:browser": "node scripts/verify-browser-bundle.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:visual": "playwright test"
