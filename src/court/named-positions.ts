@@ -29,6 +29,8 @@ export function fibaNamedPosition(
 
     top_of_the_key: { x: 0, y: basketY - d.three_point_distance },
 
+    paint_center: { x: 0, y: (basketY + ftLineY) / 2 },
+
     left_wing: { x: -d.three_point_distance, y: ftLineY + 0.4 },
     right_wing: { x: d.three_point_distance, y: ftLineY + 0.4 },
 
@@ -39,7 +41,12 @@ export function fibaNamedPosition(
     right_baseline: { x: halfWidth, y: baseline },
     free_throw_line: { x: 0, y: ftLineY },
 
+    "midcourt.center": { x: 0, y: 0 },
+    "midcourt.left": { x: -halfWidth, y: 0 },
+    "midcourt.right": { x: halfWidth, y: 0 },
+
     "backcourt.basket": { x: 0, y: -basketY },
+    "backcourt.free_throw_line": { x: 0, y: -ftLineY },
     "backcourt.left_block": { x: -paintHalfWidth, y: -(baseline - 3.0) },
     "backcourt.right_block": { x: paintHalfWidth, y: -(baseline - 3.0) },
     "backcourt.left_elbow": { x: -paintHalfWidth, y: -ftLineY },
@@ -53,12 +60,19 @@ export function fibaNamedPosition(
     "inbound.baseline_left": { x: -3.0, y: baseline },
     "inbound.baseline_right": { x: 3.0, y: baseline },
     "inbound.baseline_center": { x: 0, y: baseline },
+
+    "inbound.sideline_left_fc": { x: -halfWidth, y: ftLineY },
+    "inbound.sideline_right_fc": { x: halfWidth, y: ftLineY },
+    "inbound.sideline_left_mid": { x: -halfWidth, y: 0 },
+    "inbound.sideline_right_mid": { x: halfWidth, y: 0 },
+    "inbound.sideline_left_bc": { x: -halfWidth, y: -ftLineY },
+    "inbound.sideline_right_bc": { x: halfWidth, y: -ftLineY },
   };
 
   const pos = table[name];
   if (!pos) {
     throw new Error(
-      `Unknown named position "${name}". Known: ${Object.keys(table).filter((k) => !k.startsWith("backcourt.") && !k.startsWith("inbound.")).join(", ")}`,
+      `Unknown named position "${name}". Known: ${Object.keys(table).filter((k) => !k.startsWith("backcourt.") && !k.startsWith("inbound.") && !k.startsWith("midcourt.")).join(", ")}`,
     );
   }
   return pos;

@@ -29,6 +29,44 @@ describe("fibaNamedPosition", () => {
     expect(back.y).toBeCloseTo(-front.y);
   });
 
+  it("resolves backcourt.free_throw_line as mirror of free_throw_line", () => {
+    const front = fibaNamedPosition("free_throw_line", FIBA_DEFAULTS);
+    const back = fibaNamedPosition("backcourt.free_throw_line", FIBA_DEFAULTS);
+    expect(back.x).toBe(front.x);
+    expect(back.y).toBeCloseTo(-front.y);
+  });
+
+  it("places paint_center on the centerline between the basket and the free-throw line", () => {
+    const basket = fibaNamedPosition("basket", FIBA_DEFAULTS);
+    const ft = fibaNamedPosition("free_throw_line", FIBA_DEFAULTS);
+    const p = fibaNamedPosition("paint_center", FIBA_DEFAULTS);
+    expect(p.x).toBe(0);
+    expect(p.y).toBeCloseTo((basket.y + ft.y) / 2);
+  });
+
+  it("places midcourt positions on the halfcourt line", () => {
+    const center = fibaNamedPosition("midcourt.center", FIBA_DEFAULTS);
+    const left = fibaNamedPosition("midcourt.left", FIBA_DEFAULTS);
+    const right = fibaNamedPosition("midcourt.right", FIBA_DEFAULTS);
+    expect(center).toEqual({ x: 0, y: 0 });
+    expect(left.y).toBe(0);
+    expect(right.y).toBe(0);
+    expect(left.x).toBeCloseTo(-right.x);
+  });
+
+  it("resolves sideline inbound positions on the sideline at each court zone", () => {
+    const fc = fibaNamedPosition("inbound.sideline_left_fc", FIBA_DEFAULTS);
+    const mid = fibaNamedPosition("inbound.sideline_left_mid", FIBA_DEFAULTS);
+    const bc = fibaNamedPosition("inbound.sideline_left_bc", FIBA_DEFAULTS);
+    expect(fc.x).toBeCloseTo(mid.x);
+    expect(mid.x).toBeCloseTo(bc.x);
+    expect(mid.y).toBe(0);
+    expect(fc.y).toBeCloseTo(-bc.y);
+
+    const rightFc = fibaNamedPosition("inbound.sideline_right_fc", FIBA_DEFAULTS);
+    expect(rightFc.x).toBeCloseTo(-fc.x);
+  });
+
   it("throws with the list of known names for an unknown name", () => {
     expect(() => fibaNamedPosition("nonexistent", FIBA_DEFAULTS)).toThrow(/Unknown named position/);
   });
