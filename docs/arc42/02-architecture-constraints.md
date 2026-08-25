@@ -1,0 +1,13 @@
+# 2. Architecture Constraints
+
+| Constraint | Description |
+|---|---|
+| **TypeScript + Three.js, browser-only** | Rendering targets a DOM `<canvas>` via `THREE.WebGLRenderer`. No server-side/headless-GL rendering path exists or is referenced — a consumer needing a static image export must run a real browser (see [Risks §11](11-risks-technical-debt.md)). |
+| **Single package, no cross-language `shared/`** | Unlike `ocf-validator` (TypeScript + Python), Three.js is browser/JS-only, so there is no equivalent of a language-neutral shared contract — everything lives in one npm package. |
+| **Renderer does not validate** | `OCFRenderer` assumes its input document is already schema-valid. Validate → render is the intended pipeline (`ocf-validator`'s `result.valid` is the pre-render gate); the renderer does not re-run schema or semantic checks and will behave unpredictably on malformed input. |
+| **Types are generated, never hand-maintained** | `src/types/ocf.generated.ts` is produced from `@opencoachingformat/spec`'s `schema/v1.json` via `scripts/generate-ocf-types.mjs` (`json-schema-to-typescript`), run automatically before every build and test (`prebuild`/`pretest` npm hooks). `src/types/ocf.ts` may only rename/re-export from it — it must never redeclare a shape that already exists in the generated file. |
+| **Framework-agnostic public API** | `OCFRenderer` is a plain, imperative class (constructor + methods), no React/Vue/framework binding — matches `ocf-editor`'s plain esbuild/IIFE setup. |
+| **`dist/` is never committed** | Both the standard build (`dist/index.{js,cjs,d.ts}`) and the browser bundle (`dist/browser/index.js`) are gitignored and rebuilt from source on every `npm run build` / `npm publish` (via `prebuild`/`prepublishOnly` hooks) — never hand-edited or manually kept in sync. |
+| **npm-published under the `@opencoachingformat` scope** | Published as `@opencoachingformat/renderer`, alongside `@opencoachingformat/spec` and `@opencoachingformat/validator`, under one npm org rather than a separate scope per package. |
+| **OIDC trusted publishing, not a long-lived token** | `release.yml` authenticates to npm via OIDC trusted publishing (no `NPM_TOKEN` secret) — a deliberate choice made after npm began deprecating bypass-2FA tokens (the only kind that can publish without an interactive OTP). See [ADR: OIDC trusted publishing](09-architecture-decisions.md). |
+| **GitHub Actions as the sole CI/CD platform** | Both `ci.yml` (typecheck/test/build on every push+PR) and `release.yml` (tag-triggered npm publish) run on GitHub Actions `ubuntu-latest` — no external CI system. |
