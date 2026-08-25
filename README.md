@@ -22,6 +22,22 @@ current architecture is documented in
 
 Try it: `npm run build && npx serve .`, then open `examples/index.html`.
 
+## Installation
+
+```bash
+npm install @opencoachingformat/renderer
+```
+
+```ts
+import { OCFRenderer } from "@opencoachingformat/renderer";
+// or, for a prebuilt browser bundle (Three.js included):
+// import { OCFRenderer } from "@opencoachingformat/renderer/browser";
+
+const canvas = document.querySelector("canvas");
+const renderer = new OCFRenderer(ocfDocument, { mode: "tactical_print" });
+renderer.renderToCanvas(0, canvas); // frameIndex, canvas
+```
+
 ## Implemented
 
 - TypeScript + Three.js, rendering into a `<canvas>` via `OCFRenderer.renderToCanvas`
