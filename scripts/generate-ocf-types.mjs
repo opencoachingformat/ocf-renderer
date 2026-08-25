@@ -17,16 +17,17 @@
  */
 import { compile } from "json-schema-to-typescript";
 import { writeFileSync, readFileSync, mkdirSync } from "node:fs";
+import { createRequire } from "node:module";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
+const require = createRequire(import.meta.url);
 
-// During local dev without the published spec package yet, fall back to a
-// sibling checkout of opencoachingformat/spec (i.e. ../spec next to this
-// repo's own root, not inside it). Once @opencoachingformat/spec ships
-// schema/v1.json as a package export, switch SCHEMA_PATH to that
-// require.resolve(...) call and delete the fallback branch.
+// Now that @opencoachingformat/spec is published, prefer the installed
+// package; fall back to a sibling checkout of opencoachingformat/spec
+// (i.e. ../spec next to this repo's own root, not inside it) for local dev
+// against an unpublished schema change.
 const SCHEMA_PATH = (() => {
   try {
     return require.resolve("@opencoachingformat/spec/schema/v1.json");
