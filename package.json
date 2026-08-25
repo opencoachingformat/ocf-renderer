@@ -34,7 +34,7 @@
     "three": "^0.185.1"
   },
   "devDependencies": {
-    "@opencoachingformat/spec": "^2.1.0",
+    "@opencoachingformat/spec": "^1.0.1",
     "@playwright/test": "^1.61.1",
     "@types/node": "^26.1.1",
     "@types/three": "^0.185.1",
