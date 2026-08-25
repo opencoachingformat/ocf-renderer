@@ -36,6 +36,7 @@ jobs:
           fi
 
       - run: npm ci
+      - run: npm run generate:types
       - run: npx tsc --noEmit
       - run: npm test
 
