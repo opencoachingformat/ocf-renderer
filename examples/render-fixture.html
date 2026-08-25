@@ -32,7 +32,8 @@
         const params = new URLSearchParams(window.location.search);
         const fixture = params.get("fixture");
         if (!fixture) {
-          throw new Error("render-fixture.html: missing required ?fixture= query param");
+          window.location.href = "index.html";
+          return;
         }
         const requestedFrameIndex = Number(params.get("frame") ?? "0");
 
