@@ -6,7 +6,6 @@ import { composeFrame } from "./compose-frame";
 function baseDoc(overrides: Partial<OcfDocument["frames"][0]> & Partial<Pick<OcfDocument, "balls">> = {}): OcfDocument {
   const { balls, ...frameOverrides } = overrides;
   return {
-    version: "1.0",
     meta: { id: "t", title: "compose test" },
     court: { ruleset: "fiba", type: "half_court" },
     entities: [

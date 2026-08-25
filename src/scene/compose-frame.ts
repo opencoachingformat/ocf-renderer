@@ -4,7 +4,7 @@ import { entityRef } from "../types/ocf";
 import { resolveFrameState } from "../parser/resolve-frame-state";
 import { CoordinateTransformer, resolveCourtDimensions } from "../court/coordinate-transformer";
 import { buildCourt } from "../court/build-court";
-import { resolveColorScheme } from "../style/color-scheme";
+import { resolveColorScheme, roleFill } from "../style/color-scheme";
 import { buildOffenseSymbol, OFFENSE_SYMBOL_RADIUS_M } from "../entities/offense-symbol";
 import { buildDefenseSymbol, applyDefenseRotation, DEFENSE_SYMBOL_HEIGHT_M } from "../entities/defense-symbol";
 import { buildBallSymbol } from "../entities/ball-symbol";
@@ -53,18 +53,18 @@ export function composeFrame(
     let radius = OFFENSE_SYMBOL_RADIUS_M;
     switch (entity.type) {
       case "offense":
-        symbol = buildOffenseSymbol(colors.offense, entity.label ?? entity.nr);
+        symbol = buildOffenseSymbol(roleFill(colors, entity.color ?? "offense"), entity.label ?? entity.nr);
         break;
       case "defense":
-        symbol = buildDefenseSymbol(colors.defense);
+        symbol = buildDefenseSymbol(roleFill(colors, entity.color ?? "defense"));
         applyDefenseRotation(symbol, entity.rotation ?? 0);
         radius = DEFENSE_SYMBOL_HEIGHT_M / 2;
         break;
       case "coach":
-        symbol = buildCoachSymbol(colors.offense);
+        symbol = buildCoachSymbol(colors.offense_fill);
         break;
       case "cone":
-        symbol = buildConeSymbol(colors.court_accent);
+        symbol = buildConeSymbol(colors.grey);
         break;
       case "station":
         continue; // acknowledged, not built — no station glyph yet
@@ -79,7 +79,7 @@ export function composeFrame(
   scene.add(ballGroup);
   for (const [ballId, ballState] of Object.entries(startState.balls)) {
     if ("dead" in ballState) continue; // dead balls are not drawn
-    const ball = buildBallSymbol(colors.ball);
+    const ball = buildBallSymbol(colors.yellow);
     ball.name = ballId;
     if ("carried_by" in ballState) {
       const carrierCoord = startState.positions[ballState.carried_by];
@@ -105,7 +105,7 @@ export function composeFrame(
     if (action.type === "shoot") {
       const shooterPos = entityWorldPos(startState, action.player, transformer);
       const basketPos = transformer.resolveToWorld({ named: "basket" });
-      actionGroup.add(buildShootGlyph(shooterPos, basketPos, colors.offense));
+      actionGroup.add(buildShootGlyph(shooterPos, basketPos, colors.offense_fill));
       continue;
     }
 
@@ -122,19 +122,19 @@ export function composeFrame(
       const curve2 = smoothPath(points);
       const line = new THREE.Line(
         new THREE.BufferGeometry().setFromPoints(resamplePath(curve2, points.length)),
-        new THREE.LineBasicMaterial({ color: colors.offense }),
+        new THREE.LineBasicMaterial({ color: colors.offense_fill }),
       );
       line.name = "move-path";
       actionGroup.add(line);
-      actionGroup.add(buildArrowhead(points[points.length - 1], endTangent, colors.offense));
+      actionGroup.add(buildArrowhead(points[points.length - 1], endTangent, colors.offense_fill));
     } else if (action.type === "dribble") {
       actionGroup.add(buildWavyLine(adjusted));
     } else if (action.type === "pass") {
       const { points, endTangent } = trimPathEnd(adjusted, OFFENSE_SYMBOL_RADIUS_M + 0.1);
-      actionGroup.add(buildDashedLine(points, colors.offense));
-      actionGroup.add(buildArrowhead(points[points.length - 1], endTangent, colors.offense));
+      actionGroup.add(buildDashedLine(points, colors.offense_fill));
+      actionGroup.add(buildArrowhead(points[points.length - 1], endTangent, colors.offense_fill));
     } else if (action.type === "screen") {
-      actionGroup.add(buildScreenLine(adjusted, colors.offense));
+      actionGroup.add(buildScreenLine(adjusted, colors.offense_fill));
     }
   }
 

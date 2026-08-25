@@ -1,10 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { entityRef, type OcfDocument } from "./ocf";
+import { entityRef, type FrameState, type OcfDocument } from "./ocf";
 
 describe("OcfDocument shape", () => {
   it("accepts a minimal valid v1 document literal", () => {
     const doc: OcfDocument = {
-      version: "1.0",
       meta: { id: "doc-1", title: "Minimal" },
       court: { ruleset: "fiba", type: "half_court" },
       entities: [{ type: "offense", nr: 1, x: 0, y: 5 }],
@@ -20,7 +19,8 @@ describe("OcfDocument shape", () => {
             { type: "rebound", player: "offense_1", variant: "defensive" },
             { type: "pickup", player: "offense_1", ball_id: "ball_1" },
           ],
-          end_state: { offense_1: { x: 1, y: 6 }, balls: { ball_1: { dead: true } } },
+          // See resolve-frame-state.test.ts for why the cast is needed here.
+          end_state: { offense_1: { x: 1, y: 6 }, balls: { ball_1: { dead: true } } } as unknown as FrameState,
         },
       ],
     };

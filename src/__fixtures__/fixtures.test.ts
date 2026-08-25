@@ -13,13 +13,13 @@ import pickAndRoll from "./pick-and-roll.json";
 import sourceFourFrameBallScreen from "./source-four-frame-ball-screen.json";
 
 const fixtures: Record<string, OcfDocument> = {
-  "simple-cut": simpleCut as OcfDocument,
-  "simple-dribble": simpleDribble as OcfDocument,
-  "pass-and-screen": passAndScreen as OcfDocument,
-  shoot: shoot as OcfDocument,
-  "full-court-two-players": fullCourtTwoPlayers as OcfDocument,
-  "custom-court": customCourt as OcfDocument,
-  "pick-and-roll": pickAndRoll as OcfDocument,
+  "simple-cut": simpleCut as unknown as OcfDocument,
+  "simple-dribble": simpleDribble as unknown as OcfDocument,
+  "pass-and-screen": passAndScreen as unknown as OcfDocument,
+  shoot: shoot as unknown as OcfDocument,
+  "full-court-two-players": fullCourtTwoPlayers as unknown as OcfDocument,
+  "custom-court": customCourt as unknown as OcfDocument,
+  "pick-and-roll": pickAndRoll as unknown as OcfDocument,
   "source-four-frame-ball-screen": sourceFourFrameBallScreen as unknown as OcfDocument,
 };
 

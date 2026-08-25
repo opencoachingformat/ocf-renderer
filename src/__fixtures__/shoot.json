@@ -1,6 +1,5 @@
 {
-  "version": "1.0",
-  "meta": { "id": "shoot", "title": "Shoot" },
+  "meta": { "id": "8f14e45f-ceea-4a53-8e5e-1f5e6d8f0a04", "title": "Shoot" },
   "court": { "ruleset": "fiba", "type": "half_court" },
   "entities": [
     { "type": "offense", "nr": 1, "label": "23", "x": 0, "y": 9 },

@@ -4,7 +4,6 @@ import type { OcfDocument } from "./types/ocf";
 import { OCFRenderer } from "./render";
 
 const doc: OcfDocument = {
-  version: "1.0",
   meta: { id: "t", title: "test" },
   court: { ruleset: "fiba", type: "half_court" },
   entities: [{ type: "offense", nr: 1, x: 0, y: 0 }],
