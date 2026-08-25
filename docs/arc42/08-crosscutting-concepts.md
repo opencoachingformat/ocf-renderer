@@ -29,6 +29,14 @@ needs "where is entity X at frame N" must call this function rather than
 reading `frames[N]` directly — reading a single frame in isolation gives an
 incomplete picture.
 
+```mermaid
+flowchart LR
+    Acc(("accumulator<br/>(empty)")) -->|"apply frame 0<br/>start/end deltas"| S1["state after<br/>frame 0"]
+    S1 -->|"apply frame 1<br/>start/end deltas"| S2["state after<br/>frame 1"]
+    S2 -->|"..."| S3["state after<br/>frame N-1"]
+    S3 -->|"apply frame N<br/>start/end deltas"| SN["state at<br/>frame N<br/>(returned)"]
+```
+
 ## 8.4 Generated types as the schema-fidelity boundary
 
 `src/types/ocf.generated.ts` is regenerated from `@opencoachingformat/spec`
@@ -58,6 +66,18 @@ resampled at constant arc length (so dash/wave patterns look uniform
 regardless of anchor spacing), then steered to avoid overlapping entity
 symbols. Only the *styling* varies per action type (dashed, wave, end-bar,
 arrowhead trimming) — the underlying curve math does not.
+
+```mermaid
+flowchart LR
+    Anchors["raw moves<br/>anchor points"] --> Smooth["smooth<br/>(CatmullRomCurve3)"]
+    Smooth --> Resample["resample<br/>(constant arc length)"]
+    Resample --> Avoid["avoid collisions<br/>(steer around entity symbols)"]
+    Avoid --> Style["apply per-type styling"]
+    Style --> Move["move / cut → solid"]
+    Style --> Dribble["dribble → wave"]
+    Style --> Pass["pass → dashed"]
+    Style --> Screen["screen → end bar"]
+```
 
 ## 8.7 Testing strategy as a design concept, not an afterthought
 

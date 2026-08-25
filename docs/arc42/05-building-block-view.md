@@ -37,6 +37,22 @@ graph TB
 
 ## 5.2 Level 2: Inside `compose-frame.ts`
 
+```mermaid
+flowchart TD
+    A["1. Build the court<br/>(geometry, lines, baskets via<br/>resolveCourtDimensions)"] --> B
+    B["2. Resolve frame state<br/>resolveFrameState(doc, frameIndex, 'start')"] --> C
+    C["3. Place entities<br/>offense / defense / coach / cone<br/>(station: acknowledged, not drawn)"] --> D
+    D["4. Place balls<br/>dead balls skipped;<br/>carried ball offset (right-handed only)"] --> E
+    E["5. Build action paths<br/>per frame.actions"] --> F["THREE.Scene"]
+
+    E --> E1["move / cut / dribble / pass / screen<br/>→ shared smooth → resample →<br/>avoid-collisions pipeline"]
+    E --> E2["shoot<br/>→ glyph at shooter"]
+    E --> E3["defend / rebound / pickup<br/>→ state-only, no drawn path"]
+    E1 --> F
+    E2 --> F
+    E3 --> F
+```
+
 For a single frame, `composeFrame` runs, in order:
 
 1. **Build the court** — geometry, lines, and (if applicable) both baskets, sized via `resolveCourtDimensions`.
