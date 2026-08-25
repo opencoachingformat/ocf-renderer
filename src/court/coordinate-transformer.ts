@@ -7,7 +7,7 @@ const FT_TO_M = 0.3048;
 
 export function resolveCourtDimensions(court: Court): CourtDimensions {
   const merged = { ...FIBA_DEFAULTS, ...(court.custom_dimensions ?? {}) };
-  if (court.unit !== "ft") return merged;
+  if (court.custom_dimensions?.unit !== "ft") return merged;
   const scaled = { ...merged };
   for (const key of Object.keys(scaled) as (keyof CourtDimensions)[]) {
     scaled[key] = (merged[key] as number) * FT_TO_M;

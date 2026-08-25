@@ -1,6 +1,5 @@
 {
-  "version": "1.0",
-  "meta": { "id": "full-court-two-players", "title": "Full Court, Two Players" },
+  "meta": { "id": "8f14e45f-ceea-4a53-8e5e-1f5e6d8f0a05", "title": "Full Court, Two Players" },
   "court": { "ruleset": "fiba", "type": "full_court" },
   "entities": [
     { "type": "offense", "nr": 1, "label": "10", "x": 0, "y": -10 },

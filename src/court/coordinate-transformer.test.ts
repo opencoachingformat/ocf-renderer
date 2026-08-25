@@ -25,7 +25,19 @@ describe("CoordinateTransformer", () => {
   });
 
   it("scales custom_dimensions from feet to meters when unit is ft", () => {
-    const t = new CoordinateTransformer({ ...court, unit: "ft", custom_dimensions: { length: 91.86 } });
+    const t = new CoordinateTransformer({
+      ...court,
+      custom_dimensions: {
+        unit: "ft",
+        length: 91.86,
+        width: 49.21,
+        basket_from_baseline: 5.25,
+        three_point_distance: 22.15,
+        paint_width: 16.08,
+        paint_depth: 19.03,
+        free_throw_distance: 19.03,
+      },
+    });
     expect(t.dimensions.length).toBeCloseTo(28, 1);
   });
 });

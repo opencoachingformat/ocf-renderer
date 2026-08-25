@@ -4,6 +4,10 @@ import type { CourtDimensions } from "./fiba-constants";
 import type { DEFAULT_COLOR_SCHEME } from "../style/color-scheme";
 import { CoordinateTransformer } from "./coordinate-transformer";
 
+// The schema has no dedicated court role, only entity/area color roles
+// (offense/defense/black/grey/...). Court markings use the neutral `grey`
+// role for lines; the floor uses `white` as a light background it reads against.
+
 function lineFromCourtPoints(
   points: { x: number; y: number }[],
   transformer: CoordinateTransformer,
@@ -46,7 +50,7 @@ function buildHoopEnd(
       { x: paintHalfWidth, y: baselineY },
     ],
     transformer,
-    colors.court_accent,
+    colors.grey,
     `paint${nameSuffix}`,
     false,
   );
@@ -57,7 +61,7 @@ function buildHoopEnd(
   const ftCircle = lineFromCourtPoints(
     ftCirclePoints,
     transformer,
-    colors.court_accent,
+    colors.grey,
     `free-throw-circle${nameSuffix}`,
     true,
   );
@@ -77,11 +81,11 @@ function buildHoopEnd(
   )
     .getPoints(48)
     .map((p) => ({ x: p.x, y: basketY + p.y }));
-  const arc = lineFromCourtPoints(arcPoints, transformer, colors.court_accent, `three-point-arc${nameSuffix}`, false);
+  const arc = lineFromCourtPoints(arcPoints, transformer, colors.grey, `three-point-arc${nameSuffix}`, false);
 
   const backboard = new THREE.Mesh(
     new THREE.RingGeometry(0.1, 0.14, 24),
-    new THREE.MeshBasicMaterial({ color: colors.court_accent }),
+    new THREE.MeshBasicMaterial({ color: colors.grey }),
   );
   backboard.rotation.x = -Math.PI / 2;
   backboard.position.copy(transformer.toWorld({ x: 0, y: basketY }));
@@ -105,7 +109,7 @@ export function buildCourt(
 
   const floor = new THREE.Mesh(
     new THREE.PlaneGeometry(dims.width, courtLength),
-    new THREE.MeshBasicMaterial({ color: colors.court_primary }),
+    new THREE.MeshBasicMaterial({ color: colors.white }),
   );
   floor.rotation.x = -Math.PI / 2;
   floor.position.copy(transformer.toWorld({ x: 0, y: (nearEdge + baseline) / 2 }));
@@ -121,7 +125,7 @@ export function buildCourt(
         { x: -dims.width / 2, y: baseline },
       ],
       transformer,
-      colors.court_accent,
+      colors.grey,
       "boundary",
       true,
     ),
@@ -139,7 +143,7 @@ export function buildCourt(
     const centerCirclePoints = new THREE.EllipseCurve(0, 0, dims.center_circle_radius, dims.center_circle_radius)
       .getPoints(48)
       .map((p) => ({ x: p.x, y: p.y }));
-    group.add(lineFromCourtPoints(centerCirclePoints, transformer, colors.court_accent, "center-circle", true));
+    group.add(lineFromCourtPoints(centerCirclePoints, transformer, colors.grey, "center-circle", true));
   }
 
   return group;

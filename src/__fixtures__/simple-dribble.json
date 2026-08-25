@@ -1,6 +1,5 @@
 {
-  "version": "1.0",
-  "meta": { "id": "simple-dribble", "title": "Simple Dribble" },
+  "meta": { "id": "8f14e45f-ceea-4a53-8e5e-1f5e6d8f0a02", "title": "Simple Dribble" },
   "court": { "ruleset": "fiba", "type": "half_court" },
   "entities": [{ "type": "offense", "nr": 1, "x": 0, "y": 3 }],
   "balls": [{ "id": "ball_1", "carried_by": "offense_1" }],

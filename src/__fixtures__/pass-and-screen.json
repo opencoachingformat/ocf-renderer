@@ -1,6 +1,5 @@
 {
-  "version": "1.0",
-  "meta": { "id": "pass-and-screen", "title": "Pass and Screen" },
+  "meta": { "id": "8f14e45f-ceea-4a53-8e5e-1f5e6d8f0a03", "title": "Pass and Screen" },
   "court": { "ruleset": "fiba", "type": "half_court" },
   "entities": [
     { "type": "offense", "nr": 1, "x": -3, "y": 4 },

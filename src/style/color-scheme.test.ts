@@ -7,13 +7,13 @@ describe("resolveColorScheme", () => {
   });
 
   it("lets the document color_scheme override defaults", () => {
-    const result = resolveColorScheme({ offense: "#123456" });
-    expect(result.offense).toBe("#123456");
-    expect(result.defense).toBe(DEFAULT_COLOR_SCHEME.defense);
+    const result = resolveColorScheme({ offense_fill: "#123456" });
+    expect(result.offense_fill).toBe("#123456");
+    expect(result.defense_fill).toBe(DEFAULT_COLOR_SCHEME.defense_fill);
   });
 
   it("lets a renderer option override beat the document scheme", () => {
-    const result = resolveColorScheme({ offense: "#123456" }, { offense: "#abcdef" });
-    expect(result.offense).toBe("#abcdef");
+    const result = resolveColorScheme({ offense_fill: "#123456" }, { offense_fill: "#abcdef" });
+    expect(result.offense_fill).toBe("#abcdef");
   });
 });

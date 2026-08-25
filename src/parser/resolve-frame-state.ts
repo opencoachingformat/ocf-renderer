@@ -7,8 +7,8 @@ export interface ResolvedFrameState {
 }
 
 function ballStateOf(ball: Ball): BallState {
-  if (ball.carried_by !== undefined) return { carried_by: ball.carried_by };
-  if (ball.at !== undefined) return { at: ball.at };
+  if ("carried_by" in ball) return { carried_by: ball.carried_by };
+  if ("at" in ball) return { at: ball.at };
   return { dead: true };
 }
 

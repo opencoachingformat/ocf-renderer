@@ -1,10 +1,10 @@
 {
-  "version": "1.0",
-  "meta": { "id": "custom-court", "title": "Custom Court" },
+  "meta": { "id": "8f14e45f-ceea-4a53-8e5e-1f5e6d8f0a06", "title": "Custom Court" },
   "court": {
     "ruleset": "custom",
     "type": "half_court",
     "custom_dimensions": {
+      "unit": "m",
       "length": 26,
       "width": 14,
       "basket_from_baseline": 1.2,

@@ -1,9 +1,8 @@
 import { describe, it, expect } from "vitest";
 import { resolveFrameState } from "./resolve-frame-state";
-import type { OcfDocument } from "../types/ocf";
+import type { FrameState, OcfDocument } from "../types/ocf";
 
 const baseDoc = (frames: OcfDocument["frames"], balls?: OcfDocument["balls"]): OcfDocument => ({
-  version: "1.0",
   meta: { id: "t", title: "test" },
   court: { ruleset: "fiba", type: "half_court" },
   entities: [
@@ -52,8 +51,11 @@ describe("resolveFrameState", () => {
   it("seeds balls from doc.balls and merges frame-state ball overrides", () => {
     const doc = baseDoc(
       [
-        { id: "f1", actions: [], end_state: { balls: { ball_1: { at: { x: 2, y: 2 } } } } },
-        { id: "f2", actions: [], end_state: { balls: { ball_2: { dead: true } } } },
+        // TS can't express "index signature except this reserved key" for object-literal
+        // assignment (json-schema-to-typescript's State/State1 shape hits this for any
+        // literal with a `balls` key); the runtime shape is schema-valid, cast around it.
+        { id: "f1", actions: [], end_state: { balls: { ball_1: { at: { x: 2, y: 2 } } } } as unknown as FrameState },
+        { id: "f2", actions: [], end_state: { balls: { ball_2: { dead: true } } } as unknown as FrameState },
       ],
       [
         { id: "ball_1", carried_by: "offense_1" },
