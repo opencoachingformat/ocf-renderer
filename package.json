@@ -1,10 +1,15 @@
 {
-  "name": "ocf-renderer",
-  "version": "0.0.0",
-  "private": true,
+  "name": "@opencoachingformat/renderer",
+  "version": "0.1.0",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -18,6 +23,7 @@
     "prebuild": "npm run generate:types",
     "build": "tsup src/index.ts --format esm,cjs --dts",
     "build:browser": "tsup --config tsup.browser.config.ts",
+    "prepublishOnly": "npm run build && npm run build:browser",
     "pretest": "npm run generate:types",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -28,6 +34,7 @@
     "three": "^0.185.1"
   },
   "devDependencies": {
+    "@opencoachingformat/spec": "^2.1.0",
     "@playwright/test": "^1.61.1",
     "@types/node": "^26.1.1",
     "@types/three": "^0.185.1",
