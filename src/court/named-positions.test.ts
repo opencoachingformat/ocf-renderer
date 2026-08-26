@@ -36,12 +36,21 @@ describe("fibaNamedPosition", () => {
     expect(back.y).toBeCloseTo(-front.y);
   });
 
-  it("places paint_center on the centerline between the basket and the free-throw line", () => {
-    const basket = fibaNamedPosition("basket", FIBA_DEFAULTS);
-    const ft = fibaNamedPosition("free_throw_line", FIBA_DEFAULTS);
+  it("resolves paint_center to the defined lane landmark (10.5m in FIBA)", () => {
     const p = fibaNamedPosition("paint_center", FIBA_DEFAULTS);
     expect(p.x).toBe(0);
-    expect(p.y).toBeCloseTo((basket.y + ft.y) / 2);
+    // "Center of the lane" is a fixed landmark, matching @opencoachingformat/spec
+    // fiba-v1.json (10.5), not the geometric midpoint of basket↔free-throw line.
+    expect(p.y).toBeCloseTo(10.5);
+  });
+
+  it("resolves high_post above the elbow, toward midcourt (7.0m in FIBA)", () => {
+    const elbow = fibaNamedPosition("left_elbow", FIBA_DEFAULTS);
+    const hp = fibaNamedPosition("high_post_left", FIBA_DEFAULTS);
+    expect(hp.x).toBeCloseTo(elbow.x);
+    // "Above the elbow" = smaller y (toward midcourt), matching spec (7.0).
+    expect(hp.y).toBeCloseTo(7.0);
+    expect(hp.y).toBeLessThan(elbow.y);
   });
 
   it("places midcourt positions on the halfcourt line", () => {
