@@ -24,12 +24,18 @@ export function fibaNamedPosition(
     left_elbow: { x: -paintHalfWidth, y: ftLineY },
     right_elbow: { x: paintHalfWidth, y: ftLineY },
 
-    high_post_left: { x: -paintHalfWidth, y: ftLineY + 1.2 },
-    high_post_right: { x: paintHalfWidth, y: ftLineY + 1.2 },
+    // "Above the elbow" = toward midcourt from the free-throw line, so y is
+    // 1.2m SMALLER than the elbow, not larger. Matches @opencoachingformat/spec
+    // positions (fiba 7.0, nba/ncaa 26.8, nfhs 21.8).
+    high_post_left: { x: -paintHalfWidth, y: ftLineY - 1.2 },
+    high_post_right: { x: paintHalfWidth, y: ftLineY - 1.2 },
 
     top_of_the_key: { x: 0, y: basketY - d.three_point_distance },
 
-    paint_center: { x: 0, y: (basketY + ftLineY) / 2 },
+    // "Center of the lane" is a defined landmark 1.925m up-court from the
+    // basket, not the geometric midpoint basket↔free-throw line. Matches the
+    // spec positions (fiba 10.5, nba/ncaa 39.825, nfhs 34.825).
+    paint_center: { x: 0, y: basketY - 1.925 },
 
     left_wing: { x: -d.three_point_distance, y: ftLineY + 0.4 },
     right_wing: { x: d.three_point_distance, y: ftLineY + 0.4 },
