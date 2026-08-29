@@ -1,9 +1,19 @@
 {
   "name": "@opencoachingformat/renderer",
-  "version": "0.1.0",
+  "version": "0.4.0",
+  "description": "Reference renderer for the Open Coaching Format — draws OCF documents as top-down court diagrams (three.js).",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/opencoachingformat/ocf-renderer.git"
+  },
+  "homepage": "https://opencoachingformat.org",
+  "bugs": {
+    "url": "https://github.com/opencoachingformat/ocf-renderer/issues"
+  },
+  "license": "CC-BY-4.0",
   "files": [
     "dist"
   ],
