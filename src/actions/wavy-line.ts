@@ -2,10 +2,11 @@ import * as THREE from "three";
 import { tangentBetween, perpendicularOf } from "../paths/tangent";
 import { smoothPath, resamplePath } from "../paths/smooth-path";
 
-// Tuned toward the values measured off TheHoopsGeek's dribble line (a calm,
-// broad serpentine rather than a tight ripple). Court-unit scale.
-const WAVELENGTH = 1.8; // broad waves (measured ~2.28)
-const AMPLITUDE = 0.4; // (measured ~0.55); visibly waved but not cartoonish
+// An even zig-zag texture *along* the dribble path — matching how coaching tools
+// (see the reference drill PDFs) draw dribbles: regular, clearly-visible waves
+// that read as "dribbling" without becoming a giant serpentine. Court-unit scale.
+const WAVELENGTH = 0.9; // tight, regular waves — several crests over a typical dribble
+const AMPLITUDE = 0.3; // clearly visible, matching the reference drills' zig-zag
 // Resolution of the emitted curve — dense enough to read as a true curve.
 const SAMPLES_PER_UNIT = 24;
 const MIN_SAMPLES = 64;

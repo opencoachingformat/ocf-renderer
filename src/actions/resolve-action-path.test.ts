@@ -93,17 +93,25 @@ describe("resolveActionPath", () => {
       balls: {},
     };
 
-    it("inserts an obstacle-clearing waypoint for around_player", () => {
+    it("inserts a three-point clearing arc around around_player", () => {
       const action: Action = {
         type: "cut",
         player: "offense_1",
         moves: [{ to: { x: 0, y: 11 }, around_player: "defense_1" }],
       };
       const path = resolveActionPath(action, aroundState, transformer)!;
-      expect(path.length).toBe(3);
+      // start, approach, apex, exit, destination
+      expect(path.length).toBe(5);
       expect(path[0].equals(transformer.resolveToWorld({ x: 0, y: 5 }))).toBe(true);
-      expect(path[2].equals(transformer.resolveToWorld({ x: 0, y: 11 }))).toBe(true);
-      expect(path[1].x).not.toBeCloseTo(0, 5);
+      expect(path[path.length - 1].equals(transformer.resolveToWorld({ x: 0, y: 11 }))).toBe(true);
+      // Every interior waypoint is pushed off the (x = 0) travel line to one side.
+      for (let i = 1; i < path.length - 1; i++) expect(path[i].x).not.toBeCloseTo(0, 5);
+      const sign = Math.sign(path[1].x);
+      for (let i = 1; i < path.length - 1; i++) expect(Math.sign(path[i].x)).toBe(sign);
+      // The apex (middle) clears the obstacle by more than the player symbol radius.
+      const obstacle = transformer.resolveToWorld({ x: 0, y: 8 });
+      const apex = path[2];
+      expect(Math.abs(apex.x - obstacle.x)).toBeGreaterThan(0.5);
     });
 
     it("routes around the obstacle on a deterministic side for collinear points", () => {
@@ -171,7 +179,10 @@ describe("resolveActionPath", () => {
       const custom = resolveActionPath(action, aroundState, transformer, {
         arcDistances: { tight: 0.2, normal: 2.0, wide: 3.0 },
       })!;
-      expect(custom[1].distanceTo(obstacleWorld)).toBeCloseTo(2.0, 5);
+      // For a head-on obstacle (collinear), the apex (middle point) sits exactly
+      // `distance` to the side of the obstacle centre.
+      const apex = custom[2];
+      expect(Math.abs(apex.x - obstacleWorld.x)).toBeCloseTo(2.0, 5);
     });
   });
 });
