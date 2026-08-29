@@ -1,0 +1,50 @@
+{
+  "$schema": "https://opencoachingformat.org/schema/v1.json",
+  "sport": "basketball",
+  "meta": {
+    "id": "b1c2d3e4-f5a6-4b7c-8d9e-0f1a2b3c4d5e",
+    "title": "Ref: Pick & Roll Passing Drill",
+    "description": "Reference reconstruction of the Pick & Roll Passing Drill (Pocket Bounce Pass): 5 sets a ball screen for 1, 1 dribbles off it, then passes to 5 rolling to the cone. Built to compare renderer output (screen glyph, around_player dribble, pass) against the source PDF.",
+    "author": "OCF Reference Fixtures",
+    "tags": ["pick-and-roll", "screen", "dribble", "pass", "reference", "half-court"],
+    "difficulty": "intermediate",
+    "created": "2026-08-29T10:00:00Z",
+    "source_format": "open"
+  },
+  "court": { "ruleset": "fiba", "type": "half_court", "drill_focus": "offense" },
+  "entities": [
+    { "type": "offense", "nr": 1, "x": 0.0, "y": 7.5 },
+    { "type": "offense", "nr": 5, "x": 2.6, "y": 9.6 },
+    { "type": "cone", "nr": 1, "x": -1.6, "y": 10.2 }
+  ],
+  "balls": [ { "id": "ball_1", "carried_by": "offense_1" } ],
+  "frames": [
+    {
+      "id": "frame_1",
+      "label": "Screen & use",
+      "description": "5 sets a ball screen at the elbow; 1 dribbles hard off the screen (around 5) toward the middle.",
+      "actions": [
+        { "player": "offense_5", "type": "screen", "for_player": "offense_1", "variant": "ball_screen", "at": { "x": 1.2, "y": 8.6 }, "physicality": "aggressive" },
+        { "player": "offense_1", "type": "dribble", "ball_id": "ball_1", "moves": [ { "variant": "speed", "to": { "x": -1.2, "y": 9.0 }, "around_player": "offense_5", "side": "left", "arc": "normal" } ] }
+      ],
+      "end_state": {
+        "offense_5": { "x": 1.2, "y": 8.6 },
+        "offense_1": { "x": -1.2, "y": 9.0 },
+        "balls": { "ball_1": { "carried_by": "offense_1" } }
+      }
+    },
+    {
+      "id": "frame_2",
+      "label": "Roll & pocket pass",
+      "description": "5 rolls to the cone; 1 delivers a pocket bounce pass to 5.",
+      "actions": [
+        { "player": "offense_5", "type": "cut", "variant": "basket", "moves": [ { "to": { "x": -1.6, "y": 10.2 } } ], "tags": ["roll"] },
+        { "player": "offense_1", "type": "pass", "to_player": "offense_5", "ball_id": "ball_1", "variant": "bounce", "after": "offense_5.cut" }
+      ],
+      "end_state": {
+        "offense_5": { "x": -1.6, "y": 10.2 },
+        "balls": { "ball_1": { "carried_by": "offense_5" } }
+      }
+    }
+  ]
+}
