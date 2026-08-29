@@ -2,21 +2,25 @@ import * as THREE from "three";
 import type { Action } from "../types/ocf";
 import type { ResolvedFrameState } from "../parser/resolve-frame-state";
 import { CoordinateTransformer } from "../court/coordinate-transformer";
+import { OFFENSE_SYMBOL_RADIUS_M } from "../entities/offense-symbol";
 
 /** How far (court units) the around_player detour waypoint sits from the
- *  obstacle, per `arc` value. The renderer owns this enum→distance mapping
- *  (RFC 0004); `normal` keeps the historical 0.6 so absent/`normal` arcs are
- *  unchanged. Overridable via {@link ResolveActionPathOptions.arcDistances}. */
+ *  obstacle's CENTER, per `arc` value. The renderer owns this enum→distance
+ *  mapping (RFC 0004). Values must clear the player symbol (radius
+ *  {@link OFFENSE_SYMBOL_RADIUS_M} = 0.5 court units) with a visible margin, so
+ *  the detour actually arcs *around* the player instead of cutting through the
+ *  symbol. Overridable via {@link ResolveActionPathOptions.arcDistances}. */
 export interface ArcDistances {
   tight: number;
   normal: number;
   wide: number;
 }
 
+// Clearance = symbol radius + a per-arc gap (tight brushes past, wide swings out).
 export const DEFAULT_ARC_DISTANCES: ArcDistances = {
-  tight: 0.35,
-  normal: 0.6,
-  wide: 0.9,
+  tight: OFFENSE_SYMBOL_RADIUS_M + 0.35, // ~0.85
+  normal: OFFENSE_SYMBOL_RADIUS_M + 0.7, // ~1.2
+  wide: OFFENSE_SYMBOL_RADIUS_M + 1.2, // ~1.7
 };
 
 export interface ResolveActionPathOptions {
@@ -71,8 +75,25 @@ function expandMoveSteps(
       }
       const arc = move.arc ?? "normal";
       const distance = arcDistances[arc];
-      const waypoint = obstacle.clone().addScaledVector(side, distance);
-      points.push(waypoint);
+
+      // The apex sits right next to the obstacle, pushed `distance` to the chosen
+      // side of the player's centre — this is the "wrap around the player" point.
+      const apex = obstacle.clone().addScaledVector(side, distance);
+
+      // Round the corner: place an approach point between current→apex and an
+      // exit point between apex→destination, each nudged toward the apex side so
+      // the smoothing spline eases in and out instead of kinking at the apex.
+      // The nudge is a fraction of the clearance, capped so it can't overshoot
+      // short legs.
+      const easeSide = distance * 0.4;
+      const approachT = 0.5; // midpoint of the current→apex leg
+      const exitT = 0.5; // midpoint of the apex→destination leg
+      const approach = current.clone().lerp(apex, approachT).addScaledVector(side, easeSide);
+      const exit = apex.clone().lerp(destination, exitT).addScaledVector(side, easeSide);
+
+      points.push(approach);
+      points.push(apex);
+      points.push(exit);
     }
     points.push(destination);
     current = destination;
