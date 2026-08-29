@@ -3,6 +3,26 @@ import type { Action } from "../types/ocf";
 import type { ResolvedFrameState } from "../parser/resolve-frame-state";
 import { CoordinateTransformer } from "../court/coordinate-transformer";
 
+/** How far (court units) the around_player detour waypoint sits from the
+ *  obstacle, per `arc` value. The renderer owns this enum→distance mapping
+ *  (RFC 0004); `normal` keeps the historical 0.6 so absent/`normal` arcs are
+ *  unchanged. Overridable via {@link ResolveActionPathOptions.arcDistances}. */
+export interface ArcDistances {
+  tight: number;
+  normal: number;
+  wide: number;
+}
+
+export const DEFAULT_ARC_DISTANCES: ArcDistances = {
+  tight: 0.35,
+  normal: 0.6,
+  wide: 0.9,
+};
+
+export interface ResolveActionPathOptions {
+  arcDistances?: Partial<ArcDistances>;
+}
+
 export function entityWorldPos(
   state: ResolvedFrameState,
   ref: string,
@@ -19,6 +39,7 @@ function expandMoveSteps(
   action: Extract<Action, { type: "move" | "cut" | "dribble" }>,
   startState: ResolvedFrameState,
   transformer: CoordinateTransformer,
+  arcDistances: ArcDistances,
 ): THREE.Vector3[] {
   const points = [entityWorldPos(startState, action.player, transformer)];
   let current = points[0];
@@ -36,10 +57,21 @@ function expandMoveSteps(
         continue;
       }
       direction.normalize();
+      // `side` is the unit vector left of the direction of travel (in world
+      // space, where court +y maps to -z; left-of-heading is (-dz, 0, dx)).
       const side = new THREE.Vector3(-direction.z, 0, direction.x);
-      const obstacleDelta = new THREE.Vector3().subVectors(obstacle, current).setY(0);
-      if (side.dot(obstacleDelta) > 0) side.negate();
-      const waypoint = obstacle.clone().addScaledVector(side, 0.6);
+      if (move.side === "left" || move.side === "right") {
+        // Author-chosen side, relative to the direction of travel.
+        if (move.side === "right") side.negate();
+      } else {
+        // No explicit side: keep the geometry heuristic (pass on the side the
+        // obstacle is NOT on, so the detour bulges away from a head-on line).
+        const obstacleDelta = new THREE.Vector3().subVectors(obstacle, current).setY(0);
+        if (side.dot(obstacleDelta) > 0) side.negate();
+      }
+      const arc = move.arc ?? "normal";
+      const distance = arcDistances[arc];
+      const waypoint = obstacle.clone().addScaledVector(side, distance);
       points.push(waypoint);
     }
     points.push(destination);
@@ -55,12 +87,14 @@ export function resolveActionPath(
   action: Action,
   startState: ResolvedFrameState,
   transformer: CoordinateTransformer,
+  options: ResolveActionPathOptions = {},
 ): THREE.Vector3[] | null {
+  const arcDistances: ArcDistances = { ...DEFAULT_ARC_DISTANCES, ...options.arcDistances };
   switch (action.type) {
     case "move":
     case "cut":
     case "dribble": {
-      const points = expandMoveSteps(action, startState, transformer);
+      const points = expandMoveSteps(action, startState, transformer, arcDistances);
       if (points.length <= 1) return null;
       return points;
     }

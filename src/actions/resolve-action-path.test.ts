@@ -125,5 +125,53 @@ describe("resolveActionPath", () => {
       };
       expect(() => resolveActionPath(action, aroundState, transformer)).toThrow(/missing/);
     });
+
+    // The moving player goes from (0,5) to (0,11); the obstacle sits at (0,8),
+    // directly ahead (collinear). "left"/"right" are relative to the direction
+    // of travel (toward +y in court units).
+    it("honors an explicit `side: left`, overriding the geometry heuristic", () => {
+      const action: Action = {
+        type: "cut",
+        player: "offense_1",
+        moves: [{ to: { x: 0, y: 11 }, around_player: "defense_1", side: "left" }],
+      };
+      const left = resolveActionPath(action, aroundState, transformer)!;
+      const right = resolveActionPath(
+        { ...action, moves: [{ to: { x: 0, y: 11 }, around_player: "defense_1", side: "right" }] },
+        aroundState,
+        transformer,
+      )!;
+      // The two sides put the waypoint on opposite sides of the obstacle line (x=0).
+      expect(Math.sign(left[1].x)).not.toBe(Math.sign(right[1].x));
+      expect(left[1].x).not.toBeCloseTo(0, 5);
+    });
+
+    it("maps arc to detour distance: tight < normal < wide", () => {
+      const mk = (arc?: "tight" | "normal" | "wide"): Action => ({
+        type: "cut",
+        player: "offense_1",
+        moves: [{ to: { x: 0, y: 11 }, around_player: "defense_1", side: "right", ...(arc ? { arc } : {}) }],
+      });
+      const obstacleWorld = transformer.resolveToWorld({ x: 0, y: 8 });
+      const dist = (arc?: "tight" | "normal" | "wide") =>
+        resolveActionPath(mk(arc), aroundState, transformer)![1].distanceTo(obstacleWorld);
+      expect(dist("tight")).toBeLessThan(dist("normal"));
+      expect(dist("normal")).toBeLessThan(dist("wide"));
+      // absent arc defaults to "normal"
+      expect(dist(undefined)).toBeCloseTo(dist("normal"), 5);
+    });
+
+    it("uses configurable arc distances when provided", () => {
+      const action: Action = {
+        type: "cut",
+        player: "offense_1",
+        moves: [{ to: { x: 0, y: 11 }, around_player: "defense_1", side: "right", arc: "normal" }],
+      };
+      const obstacleWorld = transformer.resolveToWorld({ x: 0, y: 8 });
+      const custom = resolveActionPath(action, aroundState, transformer, {
+        arcDistances: { tight: 0.2, normal: 2.0, wide: 3.0 },
+      })!;
+      expect(custom[1].distanceTo(obstacleWorld)).toBeCloseTo(2.0, 5);
+    });
   });
 });
