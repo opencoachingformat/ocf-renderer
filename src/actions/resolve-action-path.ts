@@ -114,6 +114,13 @@ export function resolveActionPath(
     case "defend":
     case "rebound":
     case "pickup":
+    // Reserved non-basketball actions (RFC 0003, schema v1.4.0). They draw no
+    // movement path here; treated like the other point-actions until a sport
+    // renderer defines their glyphs.
+    case "tackle":
+    case "clear":
+    case "faceoff":
+    case "check":
       return null;
     default: {
       const exhaustive: never = action;
