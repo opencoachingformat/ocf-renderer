@@ -1,0 +1,23 @@
+{
+  "$schema": "https://opencoachingformat.org/schema/v1.json",
+  "sport": "basketball",
+  "meta": { "id": "3c9f7a2e-4b1d-4e6f-8a0c-2d5e9a1b3c7f", "title": "Curl around a screen (side + arc)", "description": "Shooter curls tight around a down-screen; the action-level defaults are overridden on the curl step.", "created": "2026-08-28T10:00:00Z", "source_format": "open" },
+  "court": { "ruleset": "fiba", "type": "half_court", "drill_focus": "offense" },
+  "entities": [
+    { "type": "offense", "nr": 2, "x": -6.75, "y": 13.98 },
+    { "type": "offense", "nr": 5, "x": -2.45, "y": 8.2 }
+  ],
+  "balls": [ { "id": "ball_1", "carried_by": "offense_2" } ],
+  "frames": [
+    {
+      "id": "f1",
+      "label": "Curl",
+      "description": "offense_2 curls tightly around offense_5's screen, passing on the right of the screener.",
+      "actions": [
+        { "player": "offense_2", "type": "cut", "variant": "curl", "side": "left", "arc": "normal",
+          "moves": [ { "to": { "named": "right_elbow" }, "around_player": "offense_5", "side": "right", "arc": "tight", "intensity": "fast" } ] }
+      ],
+      "end_state": { "offense_2": { "named": "right_elbow" } }
+    }
+  ]
+}
