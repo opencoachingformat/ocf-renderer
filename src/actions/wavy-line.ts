@@ -2,11 +2,11 @@ import * as THREE from "three";
 import { tangentBetween, perpendicularOf } from "../paths/tangent";
 import { smoothPath, resamplePath } from "../paths/smooth-path";
 
-// A fine, even zig-zag texture *along* the dribble path — matching how coaching
-// tools (see the reference drill PDFs) draw dribbles: small regular waves that
-// read as "dribbling" without dominating the line. Court-unit scale.
-const WAVELENGTH = 1.1; // fairly tight, regular waves
-const AMPLITUDE = 0.22; // small — the wave is a texture, not a big serpentine
+// An even zig-zag texture *along* the dribble path — matching how coaching tools
+// (see the reference drill PDFs) draw dribbles: regular, clearly-visible waves
+// that read as "dribbling" without becoming a giant serpentine. Court-unit scale.
+const WAVELENGTH = 0.9; // tight, regular waves — several crests over a typical dribble
+const AMPLITUDE = 0.3; // clearly visible, matching the reference drills' zig-zag
 // Resolution of the emitted curve — dense enough to read as a true curve.
 const SAMPLES_PER_UNIT = 24;
 const MIN_SAMPLES = 64;
