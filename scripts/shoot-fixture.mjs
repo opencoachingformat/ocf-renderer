@@ -4,7 +4,7 @@
 // Requires: npm run build (so dist/ + the browser bundle exist) first.
 import { createServer } from "node:http";
 import { readFileSync, existsSync } from "node:fs";
-import { extname, join, resolve } from "node:path";
+import { extname, join, resolve, sep } from "node:path";
 import { chromium } from "playwright";
 
 const root = resolve(import.meta.dirname, "..");
@@ -23,7 +23,13 @@ const MIME = {
 
 const server = createServer((req, res) => {
   const urlPath = decodeURIComponent(req.url.split("?")[0]);
-  const filePath = join(root, urlPath);
+  // Resolve within root and confirm the result stays inside it, so a crafted
+  // `../` path can't escape the served directory (path-traversal guard).
+  const filePath = resolve(root, "." + urlPath);
+  const rootPrefix = root.endsWith(sep) ? root : root + sep;
+  if (filePath !== root && !filePath.startsWith(rootPrefix)) {
+    res.writeHead(403); res.end("forbidden"); return;
+  }
   if (!existsSync(filePath)) { res.writeHead(404); res.end("not found"); return; }
   res.writeHead(200, { "Content-Type": MIME[extname(filePath)] ?? "application/octet-stream" });
   res.end(readFileSync(filePath));
