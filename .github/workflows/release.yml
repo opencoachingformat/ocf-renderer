@@ -55,3 +55,19 @@ jobs:
       # publishing, no --provenance flag.
       - name: Publish to npm
         run: npm publish
+
+      # After a successful publish, tell the spec site to bump its pinned
+      # renderer version and open a PR. Requires an OCF_SITE_DISPATCH_TOKEN
+      # secret (a PAT / fine-grained token with contents:write + pull-requests:
+      # write on opencoachingformat/spec). If the secret is absent the step is
+      # skipped, so a release still succeeds without it.
+      - name: Notify spec site to bump the renderer pin
+        env:
+          SITE_TOKEN: ${{ secrets.OCF_SITE_DISPATCH_TOKEN }}
+        if: ${{ env.SITE_TOKEN != '' }}
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.OCF_SITE_DISPATCH_TOKEN }}
+          repository: opencoachingformat/spec
+          event-type: renderer_released
+          client-payload: '{"version": "${{ github.ref_name }}"}'
