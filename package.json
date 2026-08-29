@@ -29,6 +29,7 @@
     "./browser": "./dist/browser/index.js"
   },
   "scripts": {
+    "dev": "node scripts/dev-server.mjs",
     "generate:types": "node scripts/generate-ocf-types.mjs",
     "prebuild": "npm run generate:types",
     "build": "tsup src/index.ts --format esm,cjs --dts",
