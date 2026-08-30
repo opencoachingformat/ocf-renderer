@@ -480,7 +480,7 @@ exports[`composeFrame scene-graph snapshots > matches snapshot for fixture: full
             0,
           ],
           "rotationY": 0,
-          "type": "Line",
+          "type": "Line2",
         },
         {
           "children": [],
@@ -823,7 +823,7 @@ exports[`composeFrame scene-graph snapshots > matches snapshot for fixture: pass
             0,
           ],
           "rotationY": 0,
-          "type": "Line",
+          "type": "Line2",
         },
         {
           "children": [],
@@ -847,7 +847,7 @@ exports[`composeFrame scene-graph snapshots > matches snapshot for fixture: pass
                 0,
               ],
               "rotationY": 0,
-              "type": "Line",
+              "type": "Line2",
             },
             {
               "children": [],
@@ -858,7 +858,7 @@ exports[`composeFrame scene-graph snapshots > matches snapshot for fixture: pass
                 0,
               ],
               "rotationY": 0,
-              "type": "Line",
+              "type": "Line2",
             },
           ],
           "name": "screen-path",
@@ -1375,7 +1375,7 @@ exports[`composeFrame scene-graph snapshots > matches snapshot for fixture: simp
             0,
           ],
           "rotationY": 0,
-          "type": "Line",
+          "type": "Line2",
         },
         {
           "children": [],
@@ -1594,7 +1594,7 @@ exports[`composeFrame scene-graph snapshots > matches snapshot for fixture: simp
             0,
           ],
           "rotationY": 0,
-          "type": "Line",
+          "type": "Line2",
         },
       ],
       "name": "actions",

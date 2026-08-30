@@ -15,6 +15,7 @@ import { resolveActionPath, entityWorldPos } from "../actions/resolve-action-pat
 import { smoothPath, resamplePath } from "../paths/smooth-path";
 import { avoidCollisions, type Obstacle } from "../paths/avoid-collisions";
 import { trimPathEnd, buildArrowhead } from "../actions/arrowhead";
+import { buildThickLine } from "../actions/thick-line";
 import { buildWavyLine } from "../actions/wavy-line";
 import { buildDashedLine } from "../actions/dashed-line";
 import { buildScreenLine } from "../actions/screen-line";
@@ -120,10 +121,7 @@ export function composeFrame(
     if (action.type === "move" || action.type === "cut") {
       const { points, endTangent } = trimPathEnd(adjusted, OFFENSE_SYMBOL_RADIUS_M + 0.1);
       const curve2 = smoothPath(points);
-      const line = new THREE.Line(
-        new THREE.BufferGeometry().setFromPoints(resamplePath(curve2, points.length)),
-        new THREE.LineBasicMaterial({ color: colors.offense_fill }),
-      );
+      const line = buildThickLine(resamplePath(curve2, points.length), colors.offense_fill);
       line.name = "move-path";
       actionGroup.add(line);
       actionGroup.add(buildArrowhead(points[points.length - 1], endTangent, colors.offense_fill));

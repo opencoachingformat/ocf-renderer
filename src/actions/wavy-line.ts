@@ -1,12 +1,14 @@
 import * as THREE from "three";
+import { Line2 } from "three/examples/jsm/lines/Line2.js";
 import { tangentBetween, perpendicularOf } from "../paths/tangent";
 import { smoothPath, resamplePath } from "../paths/smooth-path";
+import { buildThickLine } from "./thick-line";
 
 // An even zig-zag texture *along* the dribble path — matching how coaching tools
 // (see the reference drill PDFs) draw dribbles: regular, clearly-visible waves
 // that read as "dribbling" without becoming a giant serpentine. Court-unit scale.
-const WAVELENGTH = 0.9; // tight, regular waves — several crests over a typical dribble
-const AMPLITUDE = 0.3; // clearly visible, matching the reference drills' zig-zag
+const WAVELENGTH = 0.8; // tight, regular waves — several crests over a typical dribble
+const AMPLITUDE = 0.2; // small: with the thick stroke, a fine texture reads as a dribble
 // Resolution of the emitted curve — dense enough to read as a true curve.
 const SAMPLES_PER_UNIT = 24;
 const MIN_SAMPLES = 64;
@@ -28,7 +30,7 @@ function amplitudeEnvelope(t: number): number {
  *  densely resampled; each sample is displaced perpendicular to the local
  *  tangent by a sine wave whose amplitude eases to 0 at both ends, so the
  *  dribble reads as a calm serpentine that lands cleanly on the target. */
-export function buildWavyLine(points: THREE.Vector3[], color = "#222222"): THREE.Line {
+export function buildWavyLine(points: THREE.Vector3[], color = "#222222"): Line2 {
   if (points.length < 2) throw new Error("buildWavyLine requires at least 2 points");
 
   // 1. Smooth the (possibly sparse) input into a curve and resample it densely,
@@ -46,10 +48,7 @@ export function buildWavyLine(points: THREE.Vector3[], color = "#222222"): THREE
     cumulative.push(totalLength);
   }
   if (totalLength < 1e-8) {
-    const line = new THREE.Line(
-      new THREE.BufferGeometry().setFromPoints(base.map((p) => p.clone())),
-      new THREE.LineBasicMaterial({ color }),
-    );
+    const line = buildThickLine(base.map((p) => p.clone()), color);
     line.name = "dribble-path";
     return line;
   }
@@ -68,10 +67,7 @@ export function buildWavyLine(points: THREE.Vector3[], color = "#222222"): THREE
     return p.clone().addScaledVector(normal, displacement);
   });
 
-  const line = new THREE.Line(
-    new THREE.BufferGeometry().setFromPoints(wavy),
-    new THREE.LineBasicMaterial({ color }),
-  );
+  const line = buildThickLine(wavy, color);
   line.name = "dribble-path";
   return line;
 }

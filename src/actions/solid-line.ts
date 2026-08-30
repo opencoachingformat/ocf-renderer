@@ -1,13 +1,13 @@
 import * as THREE from "three";
+import { Line2 } from "three/examples/jsm/lines/Line2.js";
+import { buildThickLine } from "./thick-line";
 
 /** Plain solid line for move/cut actions. Arrowhead attachment happens
- *  separately (Task 14) so this builder stays a single-purpose primitive. */
-export function buildSolidLine(points: THREE.Vector3[], color = "#222222"): THREE.Line {
+ *  separately so this builder stays a single-purpose primitive. Uses the shared
+ *  thick-line (Line2) so the stroke renders at a real, world-scaled width. */
+export function buildSolidLine(points: THREE.Vector3[], color = "#222222"): Line2 {
   if (points.length < 2) throw new Error("buildSolidLine requires at least 2 points");
-  const line = new THREE.Line(
-    new THREE.BufferGeometry().setFromPoints(points),
-    new THREE.LineBasicMaterial({ color }),
-  );
+  const line = buildThickLine(points, color);
   line.name = "move-path";
   return line;
 }

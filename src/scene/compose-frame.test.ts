@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import * as THREE from "three";
+import { Line2 } from "three/examples/jsm/lines/Line2.js";
 import type { OcfDocument } from "../types/ocf";
 import { composeFrame } from "./compose-frame";
 
@@ -35,7 +36,7 @@ describe("composeFrame", () => {
     expect(balls.children[0].position.equals(carrierSymbol.position)).toBe(false); // offset applied
 
     const actions = scene.getObjectByName("actions")!;
-    expect(actions.getObjectByName("move-path")).toBeInstanceOf(THREE.Line);
+    expect(actions.getObjectByName("move-path")).toBeInstanceOf(Line2);
     expect(actions.getObjectByName("arrowhead")).toBeInstanceOf(THREE.Mesh);
   });
 
