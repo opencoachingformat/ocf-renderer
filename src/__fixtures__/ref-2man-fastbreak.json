@@ -1,0 +1,39 @@
+{
+  "$schema": "https://opencoachingformat.org/schema/v1.json",
+  "sport": "basketball",
+  "meta": {
+    "id": "c2d3e4f5-a6b7-4c8d-9e0f-1a2b3c4d5e6f",
+    "title": "Ref: 2-man Fastbreak (Setup)",
+    "description": "Reference reconstruction of the 2-man Fastbreak setup: 1 receives the outlet and dribbles up the middle while 2 sprints the wide lane and cuts to the 45. Built to compare the dribble line and cut against the source PDF / TheHoopsGeek.",
+    "author": "OCF Reference Fixtures",
+    "tags": ["fastbreak", "transition", "dribble", "cut", "reference", "full-court"],
+    "difficulty": "beginner",
+    "created": "2026-08-29T10:10:00Z",
+    "source_format": "open"
+  },
+  "court": { "ruleset": "fiba", "type": "full_court", "drill_focus": "transition" },
+  "entities": [
+    { "type": "offense", "nr": 1, "x": 6.0, "y": -12.5 },
+    { "type": "offense", "nr": 2, "x": -6.5, "y": -13.0 },
+    { "type": "coach", "nr": 1, "x": 6.5, "y": -11.5 }
+  ],
+  "balls": [ { "id": "ball_1", "carried_by": "offense_1" } ],
+  "frames": [
+    {
+      "id": "frame_1",
+      "label": "Push & fill the lane",
+      "description": "1 dribbles up the middle; 2 stays wide, then cuts into the 45 (left wing). The coach stays at the outlet spot.",
+      "actions": [
+        { "player": "offense_1", "type": "dribble", "ball_id": "ball_1", "moves": [ { "variant": "speed", "to": { "x": 1.0, "y": 4.0 } } ] },
+        { "player": "offense_2", "type": "move", "moves": [ { "to": { "x": -6.5, "y": 2.0 } } ] },
+        { "player": "offense_2", "type": "cut", "variant": "basket", "moves": [ { "to": { "named": "left_wing" } } ], "after": "offense_2.move" }
+      ],
+      "end_state": {
+        "offense_1": { "x": 1.0, "y": 4.0 },
+        "offense_2": { "named": "left_wing" },
+        "coach_1": { "x": 6.5, "y": -11.5 },
+        "balls": { "ball_1": { "carried_by": "offense_1" } }
+      }
+    }
+  ]
+}
