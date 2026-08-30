@@ -44,12 +44,24 @@ describe("buildArrowhead", () => {
     expect(mesh.name).toBe("arrowhead");
   });
 
-  it("orients the cone's tip (local +Y) to point along the given (normalized, y=0) direction", () => {
+  it("orients the tip vertex to point along the given (normalized, y=0) direction, flat in the court plane", () => {
     const direction = new THREE.Vector3(1, 0, 1).normalize();
     const mesh = buildArrowhead(new THREE.Vector3(0, 0, 0), direction, "#00ff00");
-    const tip = new THREE.Vector3(0, 1, 0).applyEuler(mesh.rotation);
-    expect(tip.x).toBeCloseTo(direction.x, 5);
-    expect(tip.y).toBeCloseTo(direction.y, 5);
-    expect(tip.z).toBeCloseTo(direction.z, 5);
+
+    // The tip is the geometry vertex furthest from the base center; after the
+    // mesh's world transform it must lie in the direction of travel and stay in
+    // the court plane (y≈0), so it renders face-on to the top-down camera.
+    mesh.updateMatrixWorld(true);
+    const pos = mesh.geometry.getAttribute("position");
+    const verts = [];
+    for (let i = 0; i < pos.count; i++) {
+      verts.push(new THREE.Vector3(pos.getX(i), pos.getY(i), pos.getZ(i)).applyMatrix4(mesh.matrixWorld));
+    }
+    // Tip = vertex with the greatest projection onto `direction`.
+    const tip = verts.reduce((a, b) => (b.dot(direction) > a.dot(direction) ? b : a));
+    const tipDir = tip.clone().normalize();
+    expect(tipDir.x).toBeCloseTo(direction.x, 5);
+    expect(tipDir.z).toBeCloseTo(direction.z, 5);
+    expect(tip.y).toBeCloseTo(0, 5); // stays flat in the court plane
   });
 });

@@ -488,7 +488,7 @@ exports[`composeFrame scene-graph snapshots > matches snapshot for fixture: full
           "position": [
             0,
             0,
-            -9.525,
+            -9.4,
           ],
           "rotationY": 0,
           "type": "Mesh",
@@ -747,7 +747,30 @@ exports[`composeFrame scene-graph snapshots > matches snapshot for fixture: pass
               "type": "Mesh",
             },
             {
-              "children": [],
+              "children": [
+                {
+                  "children": [],
+                  "name": "Line2",
+                  "position": [
+                    0,
+                    0,
+                    0,
+                  ],
+                  "rotationY": 0,
+                  "type": "Line2",
+                },
+                {
+                  "children": [],
+                  "name": "Line2",
+                  "position": [
+                    0,
+                    0,
+                    0,
+                  ],
+                  "rotationY": 0,
+                  "type": "Line2",
+                },
+              ],
               "name": "defense-arms",
               "position": [
                 0,
@@ -755,7 +778,7 @@ exports[`composeFrame scene-graph snapshots > matches snapshot for fixture: pass
                 0,
               ],
               "rotationY": 0,
-              "type": "Line",
+              "type": "Group",
             },
           ],
           "name": "defense-symbol",
@@ -829,11 +852,11 @@ exports[`composeFrame scene-graph snapshots > matches snapshot for fixture: pass
           "children": [],
           "name": "arrowhead",
           "position": [
-            2.525,
+            2.4,
             0,
             -4,
           ],
-          "rotationY": 0,
+          "rotationY": 1.571,
           "type": "Mesh",
         },
         {
@@ -1034,7 +1057,30 @@ exports[`composeFrame scene-graph snapshots > matches snapshot for fixture: shoo
               "type": "Mesh",
             },
             {
-              "children": [],
+              "children": [
+                {
+                  "children": [],
+                  "name": "Line2",
+                  "position": [
+                    0,
+                    0,
+                    0,
+                  ],
+                  "rotationY": 0,
+                  "type": "Line2",
+                },
+                {
+                  "children": [],
+                  "name": "Line2",
+                  "position": [
+                    0,
+                    0,
+                    0,
+                  ],
+                  "rotationY": 0,
+                  "type": "Line2",
+                },
+              ],
               "name": "defense-arms",
               "position": [
                 0,
@@ -1042,7 +1088,7 @@ exports[`composeFrame scene-graph snapshots > matches snapshot for fixture: shoo
                 0,
               ],
               "rotationY": 0,
-              "type": "Line",
+              "type": "Group",
             },
           ],
           "name": "defense-symbol",
@@ -1115,7 +1161,30 @@ exports[`composeFrame scene-graph snapshots > matches snapshot for fixture: shoo
               "type": "Mesh",
             },
             {
-              "children": [],
+              "children": [
+                {
+                  "children": [],
+                  "name": "Line2",
+                  "position": [
+                    0,
+                    0,
+                    0,
+                  ],
+                  "rotationY": 0,
+                  "type": "Line2",
+                },
+                {
+                  "children": [],
+                  "name": "Line2",
+                  "position": [
+                    0,
+                    0,
+                    0,
+                  ],
+                  "rotationY": 0,
+                  "type": "Line2",
+                },
+              ],
               "name": "defense-arms",
               "position": [
                 0,
@@ -1123,7 +1192,7 @@ exports[`composeFrame scene-graph snapshots > matches snapshot for fixture: shoo
                 0,
               ],
               "rotationY": 0,
-              "type": "Line",
+              "type": "Group",
             },
           ],
           "name": "shoot-glyph",
@@ -1299,7 +1368,30 @@ exports[`composeFrame scene-graph snapshots > matches snapshot for fixture: simp
               "type": "Mesh",
             },
             {
-              "children": [],
+              "children": [
+                {
+                  "children": [],
+                  "name": "Line2",
+                  "position": [
+                    0,
+                    0,
+                    0,
+                  ],
+                  "rotationY": 0,
+                  "type": "Line2",
+                },
+                {
+                  "children": [],
+                  "name": "Line2",
+                  "position": [
+                    0,
+                    0,
+                    0,
+                  ],
+                  "rotationY": 0,
+                  "type": "Line2",
+                },
+              ],
               "name": "defense-arms",
               "position": [
                 0,
@@ -1307,7 +1399,7 @@ exports[`composeFrame scene-graph snapshots > matches snapshot for fixture: simp
                 0,
               ],
               "rotationY": 0,
-              "type": "Line",
+              "type": "Group",
             },
           ],
           "name": "defense-symbol",
@@ -1381,11 +1473,11 @@ exports[`composeFrame scene-graph snapshots > matches snapshot for fixture: simp
           "children": [],
           "name": "arrowhead",
           "position": [
-            -1.605,
+            -1.501,
             0,
-            -5.737,
+            -5.667,
           ],
-          "rotationY": 0,
+          "rotationY": -0.983,
           "type": "Mesh",
         },
       ],

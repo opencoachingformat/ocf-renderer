@@ -3,21 +3,25 @@ import * as THREE from "three";
 import { buildDefenseSymbol, applyDefenseRotation } from "./defense-symbol";
 
 describe("buildDefenseSymbol", () => {
-  it("names the group and includes body + arms children", () => {
+  it("names the group and includes a body disc + arms children", () => {
     const group = buildDefenseSymbol("#c0392b");
     expect(group.name).toBe("defense-symbol");
     expect(group.getObjectByName("defense-body")).toBeInstanceOf(THREE.Mesh);
-    expect(group.getObjectByName("defense-arms")).toBeInstanceOf(THREE.Line);
+    // Arms are a group of two thick strokes (Line2), not a single hairline Line.
+    expect(group.getObjectByName("defense-arms")).toBeInstanceOf(THREE.Group);
   });
 
-  it("preserves the spec's 51:23 icon aspect ratio without distortion", () => {
+  it("spreads two arms forward (toward -z) in a V opening from the body", () => {
     const group = buildDefenseSymbol("#c0392b");
-    const body = group.getObjectByName("defense-body") as THREE.Mesh;
-    body.geometry.computeBoundingBox();
-    const box = body.geometry.boundingBox!;
-    const width = box.max.x - box.min.x;
-    const height = box.max.y - box.min.y;
-    expect(width / height).toBeCloseTo(51 / 23, 1);
+    const arms = group.getObjectByName("defense-arms") as THREE.Group;
+    expect(arms.children).toHaveLength(2); // left + right arm
+    // Both arms reach forward (their far ends are at more-negative z than the body center).
+    for (const arm of arms.children) {
+      const pos = (arm as THREE.Mesh).geometry.getAttribute("instanceEnd");
+      let minZ = Infinity;
+      for (let i = 0; i < pos.count; i++) minZ = Math.min(minZ, pos.getZ(i));
+      expect(minZ).toBeLessThan(0); // reaches out in front of the body
+    }
   });
 });
 
