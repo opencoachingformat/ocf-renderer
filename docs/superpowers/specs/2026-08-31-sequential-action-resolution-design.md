@@ -121,10 +121,27 @@ pass endpoints read from `endState`.
   action's overrides into `resolveActionPath`. Scene assembly is otherwise
   unchanged. `pickup`/`rebound` continue to draw nothing.
 
-`around_player` handling and `avoidCollisions` run afterwards, unchanged.
-Correcting the start origin is expected to improve — but not necessarily fully
-fix — the pick-and-roll apex hook; any residual hook is a **separate** follow-up
-(apex geometry), not coupled to this change.
+`avoidCollisions` runs afterwards, unchanged.
+
+### around_player apex hook (in scope)
+
+`around_player` runs after start/end resolution. Correcting the start origin
+improves it, but the apex geometry itself can still produce an "up-then-down"
+hook: when the obstacle sits roughly between the (now correct) start and a
+destination on the same side, the approach/apex/exit waypoints backtrack instead
+of arcing cleanly around the player.
+
+This fix is **in scope**. The apex-geometry correction:
+
+- Places the apex beside the obstacle on the chosen side (unchanged intent).
+- Derives approach/exit points by projecting along the **start→destination
+  heading**, not the raw `current→apex` / `apex→destination` legs, so the detour
+  never doubles back past its own start or overshoots the destination.
+- Clamps the ease nudge so short legs cannot invert the path direction.
+
+Verification: `pick-and-roll` frame 1 dribble (`around_player: defense_1`) must
+trace a monotonic-ish arc from start to destination with no reversal in the
+dominant travel direction.
 
 ## Testing
 
@@ -141,18 +158,20 @@ Pure unit tests on the resolver (no DOM):
    dribble by that player starts at the pickup/rebound point.
 6. **Invariant assumed, not enforced:** a move/cut by the current ball-holder
    still renders as declared (optional console warning), no crash.
+7. **around_player arc is monotonic:** for a dribble with `around_player`, the
+   resolved path's projection onto the start→destination heading is
+   non-decreasing (no backtracking / up-then-down hook).
 
 Visual regression via the screenshot harness: re-render `3-man-weave`,
 `transition-3v2`, `pick-and-roll` (all frames), plus a full-gallery smoke test.
 
 ## Scope boundary (YAGNI)
 
-This change covers **path anchoring and possession chaining only**. Out of
-scope, tracked separately:
+This change covers **path anchoring, possession chaining, and the
+`around_player` apex hook**. Out of scope, tracked separately:
 
 - shoot glyph (a real shot notation, not the reused defender glyph)
 - custom-court 3-point corner segments
-- around_player apex hook
 - screen glyph polish
 
 ## No schema / spec change
