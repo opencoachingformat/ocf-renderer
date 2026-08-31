@@ -15,6 +15,7 @@ import { resolveActionPath } from "../actions/resolve-action-path";
 import { resolveFrameActionAnchors } from "../actions/frame-action-anchors";
 import { separateOverlappingSymbols } from "../entities/separate-overlapping";
 import { smoothPath, resamplePath } from "../paths/smooth-path";
+import { tangentBetween } from "../paths/tangent";
 import { avoidCollisions, type Obstacle } from "../paths/avoid-collisions";
 import { trimPathEnd, buildArrowhead, ARROWHEAD_LENGTH_M } from "../actions/arrowhead";
 import { buildThickLine } from "../actions/thick-line";
@@ -152,18 +153,25 @@ export function composeFrame(
     const adjusted = avoidCollisions(resampled, targetObstacles);
 
     if (action.type === "move" || action.type === "cut") {
-      const { points, endTangent } = trimPathEnd(adjusted, OFFENSE_SYMBOL_RADIUS_M + ARROWHEAD_LENGTH_M);
-      const curve2 = smoothPath(points);
-      const line = buildThickLine(resamplePath(curve2, points.length), actionColor);
+      const { points } = trimPathEnd(adjusted, OFFENSE_SYMBOL_RADIUS_M + ARROWHEAD_LENGTH_M);
+      // Draw the final smoothed line, then read the arrowhead's position and
+      // direction from that line's ACTUAL last segment — re-smoothing can bend
+      // the tail, so a tangent taken before smoothing would tilt the head.
+      const linePoints = resamplePath(smoothPath(points), Math.max(points.length, 16));
+      const line = buildThickLine(linePoints, actionColor);
       line.name = "move-path";
       actionGroup.add(line);
-      actionGroup.add(buildArrowhead(points[points.length - 1], endTangent, actionColor));
+      const tip = linePoints[linePoints.length - 1];
+      const endTangent = tangentBetween(linePoints[linePoints.length - 2], tip);
+      actionGroup.add(buildArrowhead(tip, endTangent, actionColor));
     } else if (action.type === "dribble") {
       actionGroup.add(buildWavyLine(adjusted, actionColor));
     } else if (action.type === "pass") {
-      const { points, endTangent } = trimPathEnd(adjusted, OFFENSE_SYMBOL_RADIUS_M + ARROWHEAD_LENGTH_M);
+      const { points } = trimPathEnd(adjusted, OFFENSE_SYMBOL_RADIUS_M + ARROWHEAD_LENGTH_M);
       actionGroup.add(buildDashedLine(points, actionColor));
-      actionGroup.add(buildArrowhead(points[points.length - 1], endTangent, actionColor));
+      const tip = points[points.length - 1];
+      const endTangent = tangentBetween(points[points.length - 2], tip);
+      actionGroup.add(buildArrowhead(tip, endTangent, actionColor));
     } else if (action.type === "screen") {
       actionGroup.add(buildScreenLine(adjusted, actionColor));
     }

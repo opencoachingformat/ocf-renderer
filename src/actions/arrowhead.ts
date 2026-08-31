@@ -3,18 +3,49 @@ import { tangentBetween } from "../paths/tangent";
 
 export const ARROWHEAD_LENGTH_M = 0.6;
 
-/** Trims the end of a point path back by `distance` along the final tangent,
- *  so an arrowhead (or any end marker) doesn't visually overlap the target
- *  symbol's border. Returns the trimmed points plus the tangent at the new end. */
+/** Trims the end of a point path back by `distance` (measured along the path's
+ *  arc length), so an arrowhead doesn't overlap the target symbol. Drops any
+ *  trailing points that fall within `distance` of the end and places the new
+ *  end exactly `distance` back along the final surviving segment, so the trimmed
+ *  path never folds back on itself. Returns the trimmed points plus the tangent
+ *  at the new end (which matches the drawn line's final direction). */
 export function trimPathEnd(
   points: THREE.Vector3[],
   distance: number,
 ): { points: THREE.Vector3[]; endTangent: THREE.Vector3 } {
-  const last = points[points.length - 1];
-  const prev = points[points.length - 2] ?? points[0];
-  const tangent = tangentBetween(prev, last);
-  const trimmedEnd = last.clone().addScaledVector(tangent, -distance);
-  return { points: [...points.slice(0, -1), trimmedEnd], endTangent: tangent };
+  if (points.length < 2) {
+    return { points: [...points], endTangent: new THREE.Vector3(0, 0, -1) };
+  }
+
+  // Walk backward from the end, accumulating segment lengths, until the running
+  // total passes `distance`. `i` becomes the index of the point at the far
+  // (start-side) end of the segment the new endpoint falls on. `remaining` is
+  // how far past points[i] (toward points[i+1]) the new endpoint sits.
+  let acc = 0;
+  let i = points.length - 1;
+  while (i > 0) {
+    const segLen = points[i].distanceTo(points[i - 1]);
+    if (acc + segLen >= distance) break;
+    acc += segLen;
+    i -= 1;
+  }
+  // The new endpoint is on the segment points[i-1] -> points[i], `distance - acc`
+  // back from points[i] toward points[i-1].
+  const back = distance - acc;
+  const from = points[i];
+  const toward = points[i - 1] ?? points[0];
+  const dirBack = new THREE.Vector3().subVectors(toward, from).setY(0);
+  const segLen = dirBack.length() || 1;
+  dirBack.multiplyScalar(1 / segLen);
+  const newEnd = from.clone().addScaledVector(dirBack, back);
+
+  // Keep every point strictly before the trimmed segment's near end, then the
+  // new endpoint. Never re-add the original (now trimmed-away) tail.
+  const kept = points.slice(0, i);
+  kept.push(newEnd);
+  const trimmed = kept.length >= 2 ? kept : [points[0].clone(), newEnd];
+  const endTangent = tangentBetween(trimmed[trimmed.length - 2], trimmed[trimmed.length - 1]);
+  return { points: trimmed, endTangent };
 }
 
 const ARROWHEAD_HALF_WIDTH_M = ARROWHEAD_LENGTH_M * 0.5;
@@ -53,9 +84,10 @@ export function buildArrowhead(
     geometry,
     new THREE.MeshBasicMaterial({ color, side: THREE.DoubleSide }),
   );
-  // Yaw about the camera axis (Y) so the tip aligns with `direction`. At yaw 0
-  // the tip points toward world -Z; measure the heading from -Z, clockwise.
-  mesh.rotation.y = Math.atan2(direction.x, -direction.z);
+  // Yaw about the camera axis (Y) so the tip (local -Z) aligns with `direction`.
+  // A yaw θ maps local (0,0,-1) to world (-sinθ, 0, -cosθ); solving that against
+  // (dx, 0, dz) gives θ = atan2(-dx, -dz).
+  mesh.rotation.y = Math.atan2(-direction.x, -direction.z);
   mesh.position.copy(atPoint);
   mesh.name = "arrowhead";
   return mesh;
