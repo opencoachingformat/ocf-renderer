@@ -1,4 +1,5 @@
 import { describe, it, expect } from "vitest";
+import * as THREE from "three";
 import type { Action } from "../types/ocf";
 import type { ResolvedFrameState } from "../parser/resolve-frame-state";
 import { CoordinateTransformer } from "../court/coordinate-transformer";
@@ -184,5 +185,37 @@ describe("resolveActionPath", () => {
       const apex = custom[2];
       expect(Math.abs(apex.x - obstacleWorld.x)).toBeCloseTo(2.0, 5);
     });
+  });
+});
+
+describe("resolveActionPath — overrides", () => {
+  it("uses startOverride as a move/dribble path's first point", () => {
+    const action: Action = {
+      type: "dribble",
+      player: "offense_1",
+      ball_id: "ball_1",
+      moves: [{ to: { x: 0, y: 0 } }],
+    };
+    const override = new THREE.Vector3(1, 0, -1);
+    const path = resolveActionPath(action, startState, transformer, { startOverride: override })!;
+    expect(path[0].x).toBeCloseTo(1, 5);
+    expect(path[0].z).toBeCloseTo(-1, 5);
+  });
+
+  it("uses startOverride and endOverride as a pass's two endpoints", () => {
+    const action: Action = {
+      type: "pass",
+      player: "offense_1",
+      to_player: "offense_2",
+      ball_id: "ball_1",
+    };
+    const s = new THREE.Vector3(1, 0, -1);
+    const e = new THREE.Vector3(5, 0, -8);
+    const path = resolveActionPath(action, startState, transformer, {
+      startOverride: s,
+      endOverride: e,
+    })!;
+    expect(path[0].equals(s)).toBe(true);
+    expect(path[path.length - 1].equals(e)).toBe(true);
   });
 });

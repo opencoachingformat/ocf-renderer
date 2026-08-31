@@ -25,6 +25,11 @@ export const DEFAULT_ARC_DISTANCES: ArcDistances = {
 
 export interface ResolveActionPathOptions {
   arcDistances?: Partial<ArcDistances>;
+  /** Replaces the acting player's frame-start position as the path's origin
+   *  (used for sequential action chaining — see frame-action-anchors). */
+  startOverride?: THREE.Vector3;
+  /** Replaces a pass's target lookup (the receiver's frame-end position). */
+  endOverride?: THREE.Vector3;
 }
 
 export function entityWorldPos(
@@ -44,8 +49,11 @@ function expandMoveSteps(
   startState: ResolvedFrameState,
   transformer: CoordinateTransformer,
   arcDistances: ArcDistances,
+  startOverride?: THREE.Vector3,
 ): THREE.Vector3[] {
-  const points = [entityWorldPos(startState, action.player, transformer)];
+  const points = [
+    startOverride ? startOverride.clone() : entityWorldPos(startState, action.player, transformer),
+  ];
   let current = points[0];
 
   for (const move of action.moves) {
@@ -115,14 +123,14 @@ export function resolveActionPath(
     case "move":
     case "cut":
     case "dribble": {
-      const points = expandMoveSteps(action, startState, transformer, arcDistances);
+      const points = expandMoveSteps(action, startState, transformer, arcDistances, options.startOverride);
       if (points.length <= 1) return null;
       return points;
     }
     case "pass": {
-      const start = entityWorldPos(startState, action.player, transformer);
-      const end = entityWorldPos(startState, action.to_player, transformer);
-      return [start, end];
+      const start = options.startOverride ?? entityWorldPos(startState, action.player, transformer);
+      const end = options.endOverride ?? entityWorldPos(startState, action.to_player, transformer);
+      return [start.clone(), end.clone()];
     }
     case "screen": {
       const start = entityWorldPos(startState, action.player, transformer);
