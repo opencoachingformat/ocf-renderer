@@ -28,9 +28,11 @@ Three issues remain after the sequential-action-resolution work:
 
 - **Respect `after`** via topological ordering — smallest change, uses the
   existing schema field, no schema change.
-- **A pass lands at the receiver's START position** (where they currently
-  stand), not their frame-end. A player catches where they are, then moves next
-  frame. This REVERSES the earlier sequential-resolution decision (pass → end).
+- **A pass lands where the receiver is WHEN IT ARRIVES**, keyed off the
+  receiver's first action in the frame (see "Pass target" below): their START
+  position if their first action needs the ball or they have no action; the END
+  of their last no-ball run if they run first. This REVERSES the earlier
+  "always frame-end" decision and refines the interim "always start" idea.
 - **Broken/cyclic `after` → soft fallback to document order, with the
   conflicting action(s) drawn highlighted in red** (plus a console warning). The
   renderer never crashes on a bad document; it makes the problem visible.
@@ -48,6 +50,7 @@ frame, an action with `after: X` depends on the action whose ref equals `X`
 (built from that action's `player` + `type`).
 
 `orderFrameActions(actions)` returns:
+
 - `ordered`: the actions topologically sorted so every action follows its
   `after` dependency. Actions without `after`, and ties, preserve document order
   (stable).
@@ -58,11 +61,38 @@ frame, an action with `after: X` depends on the action whose ref equals `X`
 Cycle/dangling handling is soft: drop the offending edge, keep going, flag the
 action. Never throw.
 
-### Possession relay (unchanged except pass target)
+### Possession invariant
 
-The relay from the prior design still holds — walk actions (now in `after`
-order), maintain an entity cursor and a ball cursor. The ONE change: a pass's
-`endOverride` is the receiver's **start** position, not end.
+A player either holds the ball or does not. With the ball a player may ONLY
+`dribble`, `pass`, or `shoot` (a handover is `type: "pass", variant: "hand_off"`
+— just a pass, so it needs no special handling). `move`/`cut` (running) is only
+for a player WITHOUT the ball. The renderer assumes this holds (the validator
+enforces it) and draws whatever is declared.
+
+Ball-requiring actions: `dribble`, `pass`, `shoot`. No-ball actions: `move`,
+`cut` (the ones that draw a running path). `pickup`/`rebound` gain the ball
+without a path.
+
+### Pass target — where the receiver catches
+
+The ball is caught where the receiver is WHEN IT ARRIVES. Because a player
+cannot run while holding the ball, this is determined by the receiver's action
+sequence in the frame (in `after` order):
+
+1. If the receiver's FIRST action is a **ball-requiring** action (dribble / pass
+   / shoot) — they act as if already in possession — OR the receiver has **no
+   action** in the frame: the pass lands at the receiver's **start position**
+   (their base-alignment / previous-frame position). They catch, then may
+   immediately dribble/pass/shoot from there.
+2. If the receiver's first action(s) are **no-ball** actions (move/cut): the
+   pass lands at the **endpoint of the receiver's last consecutive no-ball
+   action** before their first ball-requiring action. They finish running,
+   arrive, then catch. Covers any number of chained no-ball actions.
+
+After catching, the receiver's ball cursor sits at the catch point, so a
+follow-up dribble/pass by the receiver chains from there (relay continues).
+
+### Symbol de-overlap
 
 ### Symbol de-overlap
 
@@ -89,9 +119,10 @@ so the head sits at the path end without overshooting the target symbol.
 - **Create `src/entities/separate-overlapping.ts`** (pure):
   `separateOverlappingSymbols`. Vector3 math only, no scene.
 - **Modify `src/actions/frame-action-anchors.ts`**: order actions via
-  `orderFrameActions` before walking; seed pass endpoints from START state
-  (revert endState pass lookup); expose a per-action `conflict` flag on
-  `AnchoredAction`.
+  `orderFrameActions` before walking; compute each pass's `endOverride` by the
+  "Pass target" rule (inspect the receiver's ordered actions to decide start
+  position vs. end-of-last-no-ball-run); expose a per-action `conflict` flag on
+  `AnchoredAction`. This replaces the interim "pass → receiver frame-end" logic.
 - **Modify `src/actions/arrowhead.ts`**: bigger length constant; trim scales.
 - **Modify `src/scene/compose-frame.ts`**: compute display positions via
   `separateOverlappingSymbols`; use them for symbols AND anchoring; when an
@@ -108,15 +139,19 @@ so the head sits at the path end without overshooting the target symbol.
 ## Testing
 
 Pure unit tests:
+
 1. `orderFrameActions`: `dribble → pass → cut` via `after` returns that order
    regardless of document order.
 2. Cycle (`A after B`, `B after A`) → both flagged, no throw, doc-order fallback.
 3. Dangling `after` (missing target) → that action flagged.
-4. Pass target = receiver **start** position.
-5. `separateOverlappingSymbols`: two coincident symbols end ≥ threshold apart;
+4. Pass target — receiver's first action is ball-requiring → **start** position.
+5. Pass target — receiver has no action in the frame → **start** position.
+6. Pass target — receiver runs first (move/cut, possibly chained) → **end of the
+   last no-ball run** before their first ball action.
+7. `separateOverlappingSymbols`: two coincident symbols end ≥ threshold apart;
    a non-overlapping pair is untouched; displacement is symmetric.
-6. Arrowhead: new length constant; tip still flat in XZ (y≈0).
-7. compose-frame: a conflicting action renders with the red material.
+8. Arrowhead: new length constant; tip still flat in XZ (y≈0).
+9. compose-frame: a conflicting action renders with the red material.
 
 Visual regression: re-render 3-man-weave (all 4 frames), pick-and-roll (overlap
 frame), transition; full-gallery smoke test; regenerate snapshots.
