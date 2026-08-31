@@ -17,7 +17,7 @@ import { separateOverlappingSymbols } from "../entities/separate-overlapping";
 import { smoothPath, resamplePath } from "../paths/smooth-path";
 import { tangentBetween } from "../paths/tangent";
 import { avoidCollisions, type Obstacle } from "../paths/avoid-collisions";
-import { trimPathEnd, buildArrowhead, ARROWHEAD_LENGTH_M } from "../actions/arrowhead";
+import { trimPathEnd, trimPathStart, buildArrowhead, ARROWHEAD_LENGTH_M } from "../actions/arrowhead";
 import { buildThickLine } from "../actions/thick-line";
 import { buildWavyLine } from "../actions/wavy-line";
 import { buildDashedLine } from "../actions/dashed-line";
@@ -150,7 +150,10 @@ export function composeFrame(
     const curve = smoothPath(rawPath);
     const resampled = resamplePath(curve, Math.max(16, rawPath.length * 8));
     const targetObstacles = obstacles.filter((o) => !rawPath[0].equals(o.center));
-    const adjusted = avoidCollisions(resampled, targetObstacles);
+    const collisionAdjusted = avoidCollisions(resampled, targetObstacles);
+    // Begin the line at the edge of the acting player's symbol (not its centre),
+    // so the start indicator sits in the gap — mirrors the end trim.
+    const adjusted = trimPathStart(collisionAdjusted, OFFENSE_SYMBOL_RADIUS_M);
 
     if (action.type === "move" || action.type === "cut") {
       const { points } = trimPathEnd(adjusted, OFFENSE_SYMBOL_RADIUS_M + ARROWHEAD_LENGTH_M);

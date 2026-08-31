@@ -1,10 +1,33 @@
 import { describe, it, expect } from "vitest";
 import * as THREE from "three";
-import { trimPathEnd, buildArrowhead, ARROWHEAD_LENGTH_M } from "./arrowhead";
+import { trimPathEnd, trimPathStart, buildArrowhead, ARROWHEAD_LENGTH_M } from "./arrowhead";
 
 describe("arrowhead size", () => {
   it("is large enough to read at the default zoom (>= 0.5 court units)", () => {
     expect(ARROWHEAD_LENGTH_M).toBeGreaterThanOrEqual(0.5);
+  });
+});
+
+describe("trimPathStart", () => {
+  it("moves the start point forward by exactly `distance` along the path", () => {
+    const points = [new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 0, -5)];
+    const trimmed = trimPathStart(points, 0.5);
+    expect(trimmed[0].x).toBeCloseTo(0, 5);
+    expect(trimmed[0].z).toBeCloseTo(-0.5, 5); // 0.5 forward toward the end
+    expect(trimmed[trimmed.length - 1].equals(points[points.length - 1])).toBe(true);
+  });
+
+  it("drops leading points that fall within `distance` of the start", () => {
+    const points = [
+      new THREE.Vector3(0, 0, 0),
+      new THREE.Vector3(0, 0, -0.2),
+      new THREE.Vector3(0, 0, -0.4),
+      new THREE.Vector3(0, 0, -5),
+    ];
+    const trimmed = trimPathStart(points, 0.5);
+    // Start advanced past the first two near points, onto the long final segment.
+    expect(trimmed[0].z).toBeCloseTo(-0.5, 5);
+    expect(trimmed.length).toBeLessThan(points.length);
   });
 });
 

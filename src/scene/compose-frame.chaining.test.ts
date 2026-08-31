@@ -37,9 +37,11 @@ describe("composeFrame — sequential chaining", () => {
     const actions = scene.getObjectByName("actions")!;
     const pass = actions.children.find((c) => c.name === "pass-path")!;
     const p0 = firstPoint(pass);
-    // near (0,0); the pass is trimmed slightly off the target end, not the start,
-    // so the start stays at the dribble endpoint.
-    expect(p0.x).toBeCloseTo(0, 1);
-    expect(p0.z).toBeCloseTo(0, 1);
+    // The pass starts where the dribble ENDED (0,0) — not the passer's frame
+    // start (-3, world z -6). Allow a one-symbol-radius start gap: the line
+    // begins at the symbol edge, so p0 sits within ~0.5 of (0,0).
+    expect(p0.distanceTo(new THREE.Vector3(0, 0, 0))).toBeLessThan(0.6);
+    // ...and nowhere near the passer's frame-start position.
+    expect(p0.distanceTo(new THREE.Vector3(-3, 0, -6))).toBeGreaterThan(2);
   });
 });

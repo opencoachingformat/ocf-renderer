@@ -48,6 +48,35 @@ export function trimPathEnd(
   return { points: trimmed, endTangent };
 }
 
+/** Trims the START of a point path forward by `distance` (along the path's arc
+ *  length), so a line begins at the edge of the acting player's symbol rather
+ *  than its centre — leaving a gap the player indicator fits into. Mirror of
+ *  {@link trimPathEnd}; drops leading points within `distance` of the start. */
+export function trimPathStart(points: THREE.Vector3[], distance: number): THREE.Vector3[] {
+  if (points.length < 2) return [...points];
+
+  // Walk forward from the start until the running total passes `distance`.
+  let acc = 0;
+  let i = 0;
+  while (i < points.length - 1) {
+    const segLen = points[i].distanceTo(points[i + 1]);
+    if (acc + segLen >= distance) break;
+    acc += segLen;
+    i += 1;
+  }
+  // The new start is `distance - acc` forward from points[i] toward points[i+1].
+  const forward = distance - acc;
+  const from = points[i];
+  const toward = points[i + 1] ?? points[points.length - 1];
+  const dir = new THREE.Vector3().subVectors(toward, from).setY(0);
+  const segLen = dir.length() || 1;
+  dir.multiplyScalar(1 / segLen);
+  const newStart = from.clone().addScaledVector(dir, forward);
+
+  const kept = [newStart, ...points.slice(i + 1)];
+  return kept.length >= 2 ? kept : [newStart, points[points.length - 1].clone()];
+}
+
 const ARROWHEAD_HALF_WIDTH_M = ARROWHEAD_LENGTH_M * 0.5;
 
 /** Flat triangular arrowhead lying in the court plane (XZ), tip pointing along
