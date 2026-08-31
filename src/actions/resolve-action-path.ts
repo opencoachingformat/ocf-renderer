@@ -84,11 +84,12 @@ function expandMoveSteps(
       const arc = move.arc ?? "normal";
       const distance = arcDistances[arc];
 
-      // Decompose the detour into a start→destination heading and the chosen
-      // perpendicular side, so the whole arc advances monotonically along the
-      // heading and never doubles back into an up-then-down hook — even when the
-      // obstacle sits behind the start relative to that heading.
-      const heading = new THREE.Vector3().subVectors(destination, current).setY(0).normalize();
+      // Decompose the detour into the start→destination heading (`direction`,
+      // already normalized above) and the chosen perpendicular `side`, so the
+      // whole arc advances monotonically along the heading and never doubles
+      // back into an up-then-down hook — even when the obstacle sits behind the
+      // start relative to that heading.
+      const heading = direction;
       // Where the obstacle projects onto the heading, measured from `current`.
       const obstacleAlong = new THREE.Vector3().subVectors(obstacle, current).dot(heading);
       // Clamp the apex's along-heading position into (0, length): the wrap-around
