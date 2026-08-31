@@ -49,7 +49,11 @@ export function resolveFrameActionAnchors(
     const startOverride = cursorFor(action.player).clone();
     const anchored: AnchoredAction = { action, startOverride };
 
-    if (action.type === "move" || action.type === "cut" || action.type === "dribble") {
+    if (action.type === "pass") {
+      // Ball is caught where the receiver finishes the frame — a player cannot
+      // run while holding the ball, so they must arrive before receiving.
+      anchored.endOverride = entityWorldPos(endState, action.to_player, transformer);
+    } else if (action.type === "move" || action.type === "cut" || action.type === "dribble") {
       const dest = lastDestination(action, transformer);
       if (dest) entityCursor.set(action.player, dest);
     }
