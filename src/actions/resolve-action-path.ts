@@ -84,20 +84,27 @@ function expandMoveSteps(
       const arc = move.arc ?? "normal";
       const distance = arcDistances[arc];
 
-      // The apex sits right next to the obstacle, pushed `distance` to the chosen
-      // side of the player's centre — this is the "wrap around the player" point.
-      const apex = obstacle.clone().addScaledVector(side, distance);
+      // Decompose the detour into a start→destination heading and the chosen
+      // perpendicular side, so the whole arc advances monotonically along the
+      // heading and never doubles back into an up-then-down hook — even when the
+      // obstacle sits behind the start relative to that heading.
+      const heading = new THREE.Vector3().subVectors(destination, current).setY(0).normalize();
+      // Where the obstacle projects onto the heading, measured from `current`.
+      const obstacleAlong = new THREE.Vector3().subVectors(obstacle, current).dot(heading);
+      // Clamp the apex's along-heading position into (0, length): the wrap-around
+      // point must lie between the start and the destination, never behind either.
+      const ease = Math.min(distance * 0.4, length * 0.25); // keeps short legs from inverting
+      const apexAlong = Math.min(Math.max(obstacleAlong, ease), length - ease);
+      const at = (along: number, sideClearance: number): THREE.Vector3 =>
+        current
+          .clone()
+          .addScaledVector(heading, along)
+          .addScaledVector(side, sideClearance);
 
-      // Round the corner: place an approach point between current→apex and an
-      // exit point between apex→destination, each nudged toward the apex side so
-      // the smoothing spline eases in and out instead of kinking at the apex.
-      // The nudge is a fraction of the clearance, capped so it can't overshoot
-      // short legs.
-      const easeSide = distance * 0.4;
-      const approachT = 0.5; // midpoint of the current→apex leg
-      const exitT = 0.5; // midpoint of the apex→destination leg
-      const approach = current.clone().lerp(apex, approachT).addScaledVector(side, easeSide);
-      const exit = apex.clone().lerp(destination, exitT).addScaledVector(side, easeSide);
+      // Apex clears the obstacle fully to the side; approach/exit ease in and out.
+      const apex = at(apexAlong, distance);
+      const approach = at(Math.max(0, apexAlong - ease), distance * 0.6);
+      const exit = at(Math.min(length, apexAlong + ease), distance * 0.6);
 
       points.push(approach);
       points.push(apex);

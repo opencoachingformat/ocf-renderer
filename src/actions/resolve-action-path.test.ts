@@ -219,3 +219,37 @@ describe("resolveActionPath — overrides", () => {
     expect(path[path.length - 1].equals(e)).toBe(true);
   });
 });
+
+describe("resolveActionPath — around_player is monotonic", () => {
+  // Reproduce the pick-and-roll hook: start above the obstacle, destination
+  // below-left, obstacle between them. The resolved path must not reverse along
+  // the start->destination heading (no up-then-down hook).
+  const hookState: ResolvedFrameState = {
+    positions: {
+      offense_1: { x: 0, y: 5.68 },
+      defense_1: { x: 0.5, y: 5.2 },
+    },
+    balls: {},
+  };
+
+  it("keeps the path's projection onto the start->destination heading non-decreasing", () => {
+    // Mirrors the pick-and-roll fixture: destination is left_elbow (-2.45, 8.2),
+    // the obstacle sits behind the start relative to that heading — the case
+    // that produced the up-then-down hook.
+    const action: Action = {
+      type: "dribble",
+      player: "offense_1",
+      ball_id: "ball_1",
+      moves: [{ to: { x: -2.45, y: 8.2 }, around_player: "defense_1" }],
+    };
+    const path = resolveActionPath(action, hookState, transformer)!;
+    const heading = path[path.length - 1].clone().sub(path[0]).setY(0).normalize();
+    let prev = -Infinity;
+    for (const p of path) {
+      const proj = p.clone().sub(path[0]).dot(heading);
+      // allow a tiny epsilon for float noise, but no real backtracking
+      expect(proj).toBeGreaterThanOrEqual(prev - 1e-6);
+      prev = Math.max(prev, proj);
+    }
+  });
+});
