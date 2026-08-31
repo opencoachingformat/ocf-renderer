@@ -3,6 +3,7 @@ import type { Action } from "../types/ocf";
 import type { ResolvedFrameState } from "../parser/resolve-frame-state";
 import { CoordinateTransformer } from "../court/coordinate-transformer";
 import { entityWorldPos } from "./resolve-action-path";
+import { orderFrameActions } from "./order-actions";
 
 /** An action plus the world-space points the renderer should draw it between.
  *  `startOverride` replaces the acting player's frame-start position;
@@ -11,6 +12,9 @@ export interface AnchoredAction {
   action: Action;
   startOverride: THREE.Vector3;
   endOverride?: THREE.Vector3;
+  /** True when this action is part of a broken/cyclic `after` chain — the
+   *  renderer draws it highlighted. */
+  conflict: boolean;
 }
 
 /** Who holds a ball and where it is, in world space. `holder` is null when the
@@ -42,6 +46,42 @@ function lastDestination(
   return dest;
 }
 
+const BALL_REQUIRING = new Set(["dribble", "pass", "shoot"]);
+const NO_BALL_RUN = new Set(["move", "cut"]);
+
+/** Where a pass to `receiver` is caught, per the design's pass-target rule:
+ *  - receiver's first ordered action needs the ball, or they have no action →
+ *    their start position;
+ *  - receiver runs first → the end of their last consecutive no-ball run before
+ *    their first ball-requiring action. */
+function passCatchPoint(
+  receiver: string,
+  orderedActions: Action[],
+  startState: ResolvedFrameState,
+  transformer: CoordinateTransformer,
+  displayPositions?: Map<string, THREE.Vector3>,
+): THREE.Vector3 {
+  const startPos = (): THREE.Vector3 =>
+    displayPositions?.get(receiver)?.clone() ?? entityWorldPos(startState, receiver, transformer);
+
+  const receiverActions = orderedActions.filter((a) => a.player === receiver);
+  const first = receiverActions[0];
+  if (!first || BALL_REQUIRING.has(first.type)) {
+    return startPos();
+  }
+  // Runs first: walk the leading run of no-ball actions, tracking the last
+  // destination, until a ball-requiring action (or the end of the list).
+  let catchPoint = startPos();
+  for (const a of receiverActions) {
+    if (BALL_REQUIRING.has(a.type)) break;
+    if (NO_BALL_RUN.has(a.type)) {
+      const dest = lastDestination(a as Extract<Action, { moves: unknown }>, transformer);
+      if (dest) catchPoint = dest;
+    }
+  }
+  return catchPoint;
+}
+
 /** Walk a frame's actions in order, chaining each action's start point to the
  *  acting player's previous action endpoint (the "possession relay"), and
  *  tracking ball possession through pass/dribble/pickup/rebound/shoot. See
@@ -51,12 +91,13 @@ export function resolveFrameActionAnchors(
   startState: ResolvedFrameState,
   endState: ResolvedFrameState,
   transformer: CoordinateTransformer,
+  displayPositions?: Map<string, THREE.Vector3>,
 ): AnchoredAction[] {
   const entityCursor = new Map<string, THREE.Vector3>();
   const cursorFor = (ref: string): THREE.Vector3 => {
     const existing = entityCursor.get(ref);
     if (existing) return existing;
-    const seeded = entityWorldPos(startState, ref, transformer);
+    const seeded = displayPositions?.get(ref)?.clone() ?? entityWorldPos(startState, ref, transformer);
     entityCursor.set(ref, seeded);
     return seeded;
   };
@@ -73,15 +114,18 @@ export function resolveFrameActionAnchors(
     }
   }
 
+  const { ordered, conflicts } = orderFrameActions(actions);
+
   const result: AnchoredAction[] = [];
-  for (const action of actions) {
+  for (const action of ordered) {
     const startOverride = cursorFor(action.player).clone();
-    const anchored: AnchoredAction = { action, startOverride };
+    const anchored: AnchoredAction = { action, startOverride, conflict: conflicts.has(action) };
 
     if (action.type === "pass") {
-      // Ball is caught where the receiver finishes the frame — a player cannot
-      // run while holding the ball, so they must arrive before receiving.
-      anchored.endOverride = entityWorldPos(endState, action.to_player, transformer);
+      // Ball is caught where the receiver is when it arrives (design pass-target
+      // rule): their start position, or the end of their last run if they run
+      // first — a player cannot run while holding the ball.
+      anchored.endOverride = passCatchPoint(action.to_player, ordered, startState, transformer, displayPositions);
       const id = ballIdFor(action);
       if (id) ballCursor.set(id, { holder: action.to_player, pos: anchored.endOverride.clone() });
     } else if (action.type === "pickup" || action.type === "rebound") {
