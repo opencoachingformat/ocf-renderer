@@ -15,7 +15,7 @@ import { resolveActionPath } from "../actions/resolve-action-path";
 import { resolveFrameActionAnchors } from "../actions/frame-action-anchors";
 import { smoothPath, resamplePath } from "../paths/smooth-path";
 import { avoidCollisions, type Obstacle } from "../paths/avoid-collisions";
-import { trimPathEnd, buildArrowhead } from "../actions/arrowhead";
+import { trimPathEnd, buildArrowhead, ARROWHEAD_LENGTH_M } from "../actions/arrowhead";
 import { buildThickLine } from "../actions/thick-line";
 import { buildWavyLine } from "../actions/wavy-line";
 import { buildDashedLine } from "../actions/dashed-line";
@@ -131,7 +131,7 @@ export function composeFrame(
     const adjusted = avoidCollisions(resampled, targetObstacles);
 
     if (action.type === "move" || action.type === "cut") {
-      const { points, endTangent } = trimPathEnd(adjusted, OFFENSE_SYMBOL_RADIUS_M + 0.1);
+      const { points, endTangent } = trimPathEnd(adjusted, OFFENSE_SYMBOL_RADIUS_M + ARROWHEAD_LENGTH_M);
       const curve2 = smoothPath(points);
       const line = buildThickLine(resamplePath(curve2, points.length), colors.offense_fill);
       line.name = "move-path";
@@ -140,7 +140,7 @@ export function composeFrame(
     } else if (action.type === "dribble") {
       actionGroup.add(buildWavyLine(adjusted));
     } else if (action.type === "pass") {
-      const { points, endTangent } = trimPathEnd(adjusted, OFFENSE_SYMBOL_RADIUS_M + 0.1);
+      const { points, endTangent } = trimPathEnd(adjusted, OFFENSE_SYMBOL_RADIUS_M + ARROWHEAD_LENGTH_M);
       actionGroup.add(buildDashedLine(points, colors.offense_fill));
       actionGroup.add(buildArrowhead(points[points.length - 1], endTangent, colors.offense_fill));
     } else if (action.type === "screen") {

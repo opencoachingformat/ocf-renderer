@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { tangentBetween } from "../paths/tangent";
 
-const ARROWHEAD_LENGTH_M = 0.25;
+export const ARROWHEAD_LENGTH_M = 0.6;
 
 /** Trims the end of a point path back by `distance` along the final tangent,
  *  so an arrowhead (or any end marker) doesn't visually overlap the target

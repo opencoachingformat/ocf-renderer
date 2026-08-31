@@ -1,6 +1,12 @@
 import { describe, it, expect } from "vitest";
 import * as THREE from "three";
-import { trimPathEnd, buildArrowhead } from "./arrowhead";
+import { trimPathEnd, buildArrowhead, ARROWHEAD_LENGTH_M } from "./arrowhead";
+
+describe("arrowhead size", () => {
+  it("is large enough to read at the default zoom (>= 0.5 court units)", () => {
+    expect(ARROWHEAD_LENGTH_M).toBeGreaterThanOrEqual(0.5);
+  });
+});
 
 function polylineLength(points: THREE.Vector3[]): number {
   let total = 0;

@@ -488,7 +488,7 @@ exports[`composeFrame scene-graph snapshots > matches snapshot for fixture: full
           "position": [
             0,
             0,
-            -9.4,
+            -8.9,
           ],
           "rotationY": 0,
           "type": "Mesh",
@@ -852,7 +852,7 @@ exports[`composeFrame scene-graph snapshots > matches snapshot for fixture: pass
           "children": [],
           "name": "arrowhead",
           "position": [
-            2.4,
+            1.9,
             0,
             -4,
           ],
@@ -1473,9 +1473,9 @@ exports[`composeFrame scene-graph snapshots > matches snapshot for fixture: simp
           "children": [],
           "name": "arrowhead",
           "position": [
-            -1.501,
+            -1.085,
             0,
-            -5.667,
+            -5.39,
           ],
           "rotationY": -0.983,
           "type": "Mesh",
