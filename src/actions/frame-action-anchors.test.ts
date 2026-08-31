@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { CoordinateTransformer } from "../court/coordinate-transformer";
 import { resolveFrameState } from "../parser/resolve-frame-state";
-import { resolveFrameActionAnchors } from "./frame-action-anchors";
+import { resolveFrameActionAnchors, ballCursorAfter } from "./frame-action-anchors";
 import type { OcfDocument } from "../types/ocf";
 
 // #1 dribbles to (0,0) then passes to #2; the pass must start where the dribble
@@ -77,5 +77,37 @@ describe("resolveFrameActionAnchors — pass endpoint", () => {
     expect(pass.endOverride).toBeDefined();
     expect(pass.endOverride!.x).toBeCloseTo(5, 5); // #2's end x
     expect(pass.endOverride!.z).toBeCloseTo(-8, 5); // #2's end y -> world z
+  });
+});
+
+describe("resolveFrameActionAnchors — ball cursor", () => {
+  // #1 has no ball at start; picks up a loose ball at their spot, then dribbles.
+  const doc = {
+    meta: { title: "pickup" },
+    court: { ruleset: "fiba", type: "half_court" },
+    entities: [{ type: "offense", nr: 1, x: -2, y: 5 }],
+    balls: [{ id: "ball_1", at: { x: -2, y: 5 } }],
+    frames: [
+      {
+        id: "f1",
+        actions: [
+          { player: "offense_1", type: "pickup", ball_id: "ball_1" },
+          { player: "offense_1", type: "dribble", ball_id: "ball_1", moves: [{ to: { x: 0, y: 1 } }] },
+        ],
+        end_state: { offense_1: { x: 0, y: 1 } },
+      },
+    ],
+  } as unknown as OcfDocument;
+
+  it("sets the ball holder to the picker-up and its position to their cursor", () => {
+    const t = new CoordinateTransformer(doc.court);
+    const start = resolveFrameState(doc, 0, "start");
+    const end = resolveFrameState(doc, 0, "end");
+    resolveFrameActionAnchors(doc.frames[0].actions!, start, end, t);
+    const ball = ballCursorAfter("ball_1");
+    expect(ball?.holder).toBe("offense_1");
+    // dribble then carried the ball to (0,1)
+    expect(ball?.pos.x).toBeCloseTo(0, 5);
+    expect(ball?.pos.z).toBeCloseTo(-1, 5);
   });
 });
