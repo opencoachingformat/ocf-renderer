@@ -11,7 +11,8 @@ import { buildBallSymbol } from "../entities/ball-symbol";
 import { buildCoachSymbol } from "../entities/coach-symbol";
 import { buildConeSymbol } from "../entities/cone-symbol";
 import { carriedBallOffset } from "../entities/ball-offset";
-import { resolveActionPath, entityWorldPos } from "../actions/resolve-action-path";
+import { resolveActionPath } from "../actions/resolve-action-path";
+import { resolveFrameActionAnchors } from "../actions/frame-action-anchors";
 import { smoothPath, resamplePath } from "../paths/smooth-path";
 import { avoidCollisions, type Obstacle } from "../paths/avoid-collisions";
 import { trimPathEnd, buildArrowhead } from "../actions/arrowhead";
@@ -100,17 +101,28 @@ export function composeFrame(
   actionGroup.name = "actions";
   scene.add(actionGroup);
 
-  for (const action of doc.frames[frameIndex].actions ?? []) {
+  // Resolve where each action starts/ends by walking the frame's actions in
+  // order (the possession relay): an action begins where the player's previous
+  // action ended, and a pass lands at the receiver's frame-end position.
+  const endState = resolveFrameState(doc, frameIndex, "end");
+  const anchored = resolveFrameActionAnchors(
+    doc.frames[frameIndex].actions ?? [],
+    startState,
+    endState,
+    transformer,
+  );
+
+  for (const { action, startOverride, endOverride } of anchored) {
     if (action.type === "defend" || action.type === "rebound" || action.type === "pickup") continue;
 
     if (action.type === "shoot") {
-      const shooterPos = entityWorldPos(startState, action.player, transformer);
+      const shooterPos = startOverride;
       const basketPos = transformer.resolveToWorld({ named: "basket" });
       actionGroup.add(buildShootGlyph(shooterPos, basketPos, colors.offense_fill));
       continue;
     }
 
-    const rawPath = resolveActionPath(action, startState, transformer);
+    const rawPath = resolveActionPath(action, startState, transformer, { startOverride, endOverride });
     if (!rawPath) continue;
 
     const curve = smoothPath(rawPath);
