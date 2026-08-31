@@ -8,11 +8,72 @@
         margin: 0;
         padding: 0;
         background: #ffffff;
+        font-family: system-ui, sans-serif;
+      }
+      #layout {
+        display: flex;
+        align-items: flex-start;
+        gap: 16px;
+        padding: 16px;
+      }
+      #stage-col {
+        flex: 0 0 auto;
       }
       canvas {
         display: block;
         width: 800px;
         height: 600px;
+        border: 1px solid #eee;
+      }
+      #toolbar {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 14px;
+        margin-bottom: 8px;
+        min-height: 20px;
+      }
+      #toolbar a { color: #0645ad; text-decoration: none; }
+      #toolbar a:hover { text-decoration: underline; }
+      #toolbar .disabled { color: #bbb; }
+      #debug-col {
+        flex: 1 1 0;
+        min-width: 320px;
+        max-width: 560px;
+        display: none; /* hidden until debug mode is on */
+      }
+      #debug-col.on { display: block; }
+      #debug-col h2 {
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: #666;
+        margin: 0 0 6px;
+      }
+      pre.json {
+        margin: 0 0 16px;
+        padding: 12px;
+        background: #0d1117;
+        color: #e6edf3;
+        border-radius: 6px;
+        font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+        font-size: 12px;
+        line-height: 1.5;
+        overflow: auto;
+        max-height: 44vh;
+        white-space: pre;
+      }
+      .tok-key { color: #7ee787; }
+      .tok-str { color: #a5d6ff; }
+      .tok-num { color: #ff9e64; }
+      .tok-bool { color: #d2a8ff; }
+      .tok-null { color: #8b949e; }
+      label.debug-toggle {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        cursor: pointer;
+        user-select: none;
       }
     </style>
     <script type="importmap">
@@ -25,9 +86,58 @@
     </script>
   </head>
   <body>
-    <canvas id="stage" width="800" height="600"></canvas>
+    <div id="layout">
+      <div id="stage-col">
+        <div id="toolbar"></div>
+        <canvas id="stage" width="800" height="600"></canvas>
+      </div>
+      <div id="debug-col">
+        <h2>Frame <span id="dbg-frame-label"></span> — JSON</h2>
+        <pre class="json" id="dbg-frame"></pre>
+        <h2>Whole document</h2>
+        <pre class="json" id="dbg-doc"></pre>
+      </div>
+    </div>
+
     <script type="module">
       import { OCFRenderer } from "../dist/index.js";
+
+      // Render syntax-highlighted JSON into `target` by appending DOM nodes only
+      // (textContent per token) — no innerHTML, so it can never inject markup.
+      function renderJsonInto(target, value) {
+        target.textContent = "";
+        const json = JSON.stringify(value, null, 2);
+        const tokenRe =
+          /("(?:\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(?:\s*:)?|\b(?:true|false)\b|\bnull\b|-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)/g;
+
+        const appendText = (text) => {
+          if (text) target.appendChild(document.createTextNode(text));
+        };
+        const appendToken = (match) => {
+          let cls = "tok-num";
+          if (match.startsWith('"')) {
+            cls = match.trimEnd().endsWith(":") ? "tok-key" : "tok-str";
+          } else if (match === "true" || match === "false") {
+            cls = "tok-bool";
+          } else if (match === "null") {
+            cls = "tok-null";
+          }
+          const span = document.createElement("span");
+          span.className = cls;
+          span.textContent = match; // plain text — safe
+          target.appendChild(span);
+        };
+
+        let cursor = 0;
+        for (const match of json.matchAll(tokenRe)) {
+          appendText(json.slice(cursor, match.index));
+          appendToken(match[0]);
+          cursor = match.index + match[0].length;
+        }
+        appendText(json.slice(cursor));
+      }
+
+      const DEBUG_KEY = "ocf-debug-mode";
 
       async function main() {
         const params = new URLSearchParams(window.location.search);
@@ -51,33 +161,57 @@
         renderer.renderToCanvas(frameIndex, canvas);
         canvas.dataset.rendered = "true";
 
-        if (doc.frames.length > 1) {
-          const nav = document.createElement("div");
-          nav.id = "frame-nav";
-          nav.style.cssText = "position:fixed;top:8px;left:8px;font-family:system-ui,sans-serif;font-size:14px;";
+        // --- Toolbar: frame nav (multi-frame) + debug toggle (always) ---
+        const toolbar = document.getElementById("toolbar");
 
+        if (doc.frames.length > 1) {
           const makeLink = (label, targetFrame) => {
             const el = document.createElement("a");
             el.textContent = label;
-            el.href = `?fixture=${encodeURIComponent(fixture)}&frame=${targetFrame}`;
+            const p = new URLSearchParams(window.location.search);
+            p.set("frame", String(targetFrame));
+            el.href = `?${p.toString()}`;
             return el;
           };
           const makeDisabled = (label) => {
             const el = document.createElement("span");
             el.textContent = label;
-            el.style.color = "#aaa";
+            el.className = "disabled";
             return el;
           };
-
-          nav.appendChild(frameIndex > 0 ? makeLink("\u2190 prev", frameIndex - 1) : makeDisabled("\u2190 prev"));
-          nav.appendChild(document.createTextNode(`\u00a0\u00a0frame ${frameIndex + 1} / ${doc.frames.length}\u00a0\u00a0`));
-          nav.appendChild(
-            frameIndex < doc.frames.length - 1
-              ? makeLink("next \u2192", frameIndex + 1)
-              : makeDisabled("next \u2192"),
+          toolbar.appendChild(frameIndex > 0 ? makeLink("← prev", frameIndex - 1) : makeDisabled("← prev"));
+          const count = document.createElement("span");
+          count.textContent = `frame ${frameIndex + 1} / ${doc.frames.length}`;
+          toolbar.appendChild(count);
+          toolbar.appendChild(
+            frameIndex < doc.frames.length - 1 ? makeLink("next →", frameIndex + 1) : makeDisabled("next →"),
           );
-          document.body.appendChild(nav);
         }
+
+        // Debug toggle — persisted in localStorage so it stays on across frames.
+        const debugCol = document.getElementById("debug-col");
+        const toggleLabel = document.createElement("label");
+        toggleLabel.className = "debug-toggle";
+        const toggle = document.createElement("input");
+        toggle.type = "checkbox";
+        toggle.checked = localStorage.getItem(DEBUG_KEY) === "1";
+        toggleLabel.appendChild(toggle);
+        toggleLabel.appendChild(document.createTextNode("Debug: show frame JSON"));
+        toolbar.appendChild(toggleLabel);
+
+        const applyDebug = () => {
+          const on = toggle.checked;
+          debugCol.classList.toggle("on", on);
+          localStorage.setItem(DEBUG_KEY, on ? "1" : "0");
+        };
+        toggle.addEventListener("change", applyDebug);
+
+        // Fill the debug panels for the current frame.
+        document.getElementById("dbg-frame-label").textContent = `${frameIndex + 1} / ${doc.frames.length}`;
+        renderJsonInto(document.getElementById("dbg-frame"), doc.frames[frameIndex]);
+        renderJsonInto(document.getElementById("dbg-doc"), doc);
+
+        applyDebug();
       }
 
       main().catch((error) => {
