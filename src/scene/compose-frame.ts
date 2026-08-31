@@ -13,6 +13,7 @@ import { buildConeSymbol } from "../entities/cone-symbol";
 import { carriedBallOffset } from "../entities/ball-offset";
 import { resolveActionPath } from "../actions/resolve-action-path";
 import { resolveFrameActionAnchors } from "../actions/frame-action-anchors";
+import { separateOverlappingSymbols } from "../entities/separate-overlapping";
 import { smoothPath, resamplePath } from "../paths/smooth-path";
 import { avoidCollisions, type Obstacle } from "../paths/avoid-collisions";
 import { trimPathEnd, buildArrowhead, ARROWHEAD_LENGTH_M } from "../actions/arrowhead";
@@ -45,11 +46,25 @@ export function composeFrame(
 
   const obstacles: Obstacle[] = [];
 
+  // Nudge near-coincident symbols apart for display only (data unchanged). Both
+  // the symbols and the action paths below anchor on these display positions.
+  const SYMBOL_SEPARATION_MARGIN = 0.15;
+  const rawPositions = new Map<string, THREE.Vector3>();
   for (const entity of doc.entities) {
     const ref = entityRef(entity);
     const coord = startState.positions[ref];
-    if (!coord) continue;
-    const worldPos = transformer.resolveToWorld(coord);
+    if (coord) rawPositions.set(ref, transformer.resolveToWorld(coord));
+  }
+  const displayPositions = separateOverlappingSymbols(
+    rawPositions,
+    OFFENSE_SYMBOL_RADIUS_M,
+    SYMBOL_SEPARATION_MARGIN,
+  );
+
+  for (const entity of doc.entities) {
+    const ref = entityRef(entity);
+    const worldPos = displayPositions.get(ref);
+    if (!worldPos) continue;
 
     let symbol: THREE.Group;
     let radius = OFFENSE_SYMBOL_RADIUS_M;
@@ -84,8 +99,9 @@ export function composeFrame(
     const ball = buildBallSymbol(colors.yellow);
     ball.name = ballId;
     if ("carried_by" in ballState) {
-      const carrierCoord = startState.positions[ballState.carried_by];
-      const carrierWorldPos = carrierCoord ? transformer.resolveToWorld(carrierCoord) : new THREE.Vector3();
+      // Follow the carrier's DISPLAY position so the ball stays on the (possibly
+      // nudged) symbol rather than the raw data position.
+      const carrierWorldPos = displayPositions.get(ballState.carried_by) ?? new THREE.Vector3();
       // v1 simplification: always offset "forward" toward -Z (frontcourt); schema
       // entities carry no handedness data, so the offset is always right-handed.
       // TODO(post-v1): Wire handedness through when schema adds left_handed/right_handed tags.
@@ -102,23 +118,28 @@ export function composeFrame(
   scene.add(actionGroup);
 
   // Resolve where each action starts/ends by walking the frame's actions in
-  // order (the possession relay): an action begins where the player's previous
-  // action ended, and a pass lands at the receiver's frame-end position.
+  // `after` order (the possession relay): an action begins where the player's
+  // previous action ended, and a pass lands where the receiver catches it.
+  // Display positions keep paths anchored on the (nudged) symbols.
   const endState = resolveFrameState(doc, frameIndex, "end");
   const anchored = resolveFrameActionAnchors(
     doc.frames[frameIndex].actions ?? [],
     startState,
     endState,
     transformer,
+    displayPositions,
   );
 
-  for (const { action, startOverride, endOverride } of anchored) {
+  for (const { action, startOverride, endOverride, conflict } of anchored) {
     if (action.type === "defend" || action.type === "rebound" || action.type === "pickup") continue;
+
+    // A broken/cyclic `after` chain is drawn red so the author sees the problem.
+    const actionColor = conflict ? colors.red : colors.offense_fill;
 
     if (action.type === "shoot") {
       const shooterPos = startOverride;
       const basketPos = transformer.resolveToWorld({ named: "basket" });
-      actionGroup.add(buildShootGlyph(shooterPos, basketPos, colors.offense_fill));
+      actionGroup.add(buildShootGlyph(shooterPos, basketPos, actionColor));
       continue;
     }
 
@@ -133,18 +154,18 @@ export function composeFrame(
     if (action.type === "move" || action.type === "cut") {
       const { points, endTangent } = trimPathEnd(adjusted, OFFENSE_SYMBOL_RADIUS_M + ARROWHEAD_LENGTH_M);
       const curve2 = smoothPath(points);
-      const line = buildThickLine(resamplePath(curve2, points.length), colors.offense_fill);
+      const line = buildThickLine(resamplePath(curve2, points.length), actionColor);
       line.name = "move-path";
       actionGroup.add(line);
-      actionGroup.add(buildArrowhead(points[points.length - 1], endTangent, colors.offense_fill));
+      actionGroup.add(buildArrowhead(points[points.length - 1], endTangent, actionColor));
     } else if (action.type === "dribble") {
-      actionGroup.add(buildWavyLine(adjusted));
+      actionGroup.add(buildWavyLine(adjusted, actionColor));
     } else if (action.type === "pass") {
       const { points, endTangent } = trimPathEnd(adjusted, OFFENSE_SYMBOL_RADIUS_M + ARROWHEAD_LENGTH_M);
-      actionGroup.add(buildDashedLine(points, colors.offense_fill));
-      actionGroup.add(buildArrowhead(points[points.length - 1], endTangent, colors.offense_fill));
+      actionGroup.add(buildDashedLine(points, actionColor));
+      actionGroup.add(buildArrowhead(points[points.length - 1], endTangent, actionColor));
     } else if (action.type === "screen") {
-      actionGroup.add(buildScreenLine(adjusted, colors.offense_fill));
+      actionGroup.add(buildScreenLine(adjusted, actionColor));
     }
   }
 
