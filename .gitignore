@@ -13,3 +13,6 @@ playwright-report
 .playwright-mcp/
 src/types/ocf.generated.ts
 screenshots/
+
+# SVG renderer spike — generated bundle (regenerate with esbuild)
+spike/svg-spike.bundle.js

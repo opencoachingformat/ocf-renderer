@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>SVG Renderer Spike</title>
+    <style>
+      body { margin: 0; font-family: system-ui, sans-serif; background: #fff; }
+      header { padding: 12px 16px; border-bottom: 1px solid #eee; display: flex; gap: 12px; align-items: center; }
+      button, select { font-size: 14px; padding: 6px 12px; }
+      #stage { width: 720px; height: 760px; display: block; margin: 16px; border: 1px solid #eee; }
+      .note { color: #666; font-size: 13px; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <label>Fixture:
+        <select id="fixture">
+          <option value="3-man-weave">3-man-weave</option>
+          <option value="transition-3v2">transition-3v2</option>
+          <option value="pick-and-roll">pick-and-roll</option>
+          <option value="source-four-frame-ball-screen">source-four-frame-ball-screen</option>
+        </select>
+      </label>
+      <button id="prev">← prev</button>
+      <span id="frame-label" class="note"></span>
+      <button id="next">next →</button>
+      <button id="play">▶ Play full animation</button>
+      <span class="note">SVG spike — crisp text, marker arrows, path-following animation</span>
+    </header>
+    <svg id="stage" xmlns="http://www.w3.org/2000/svg"></svg>
+
+    <script type="module">
+      import { renderFrame, playAnimation } from "./svg-spike.bundle.js";
+
+      const svg = document.getElementById("stage");
+      const fixtureSel = document.getElementById("fixture");
+      const frameLabel = document.getElementById("frame-label");
+      let doc = null;
+      let frame = 0;
+
+      async function loadFixture(name) {
+        const res = await fetch(`../src/__fixtures__/${name}.json`);
+        doc = await res.json();
+        frame = 0;
+        draw();
+      }
+      function draw() {
+        frame = Math.max(0, Math.min(frame, doc.frames.length - 1));
+        renderFrame(svg, { doc }, frame);
+        frameLabel.textContent = `frame ${frame + 1} / ${doc.frames.length}`;
+      }
+
+      document.getElementById("prev").onclick = () => { frame--; draw(); };
+      document.getElementById("next").onclick = () => { frame++; draw(); };
+      document.getElementById("play").onclick = () => playAnimation(svg, { doc });
+      fixtureSel.onchange = () => loadFixture(fixtureSel.value);
+
+      loadFixture(fixtureSel.value);
+    </script>
+  </body>
+</html>
